@@ -38,10 +38,20 @@ const levelColor: Record<string, string> = {
   intermediate: "border-accent/50 bg-accent/10 text-accent",
 };
 
-const levelLabel: Record<string, string> = {
-  expert: "███",
-  advanced: "██░",
-  intermediate: "█░░",
+const LevelDots = ({ level }: { level: string }) => {
+  const count = level === "expert" ? 3 : level === "advanced" ? 2 : 1;
+  const color = level === "expert" ? "bg-primary" : level === "advanced" ? "bg-secondary" : "bg-accent";
+  
+  return (
+    <span className="flex items-center gap-0.5 mr-2">
+      {[1, 2, 3].map((dot) => (
+        <span
+          key={dot}
+          className={`w-1.5 h-1.5 rounded-full ${dot <= count ? color : "bg-muted-foreground/20"}`}
+        />
+      ))}
+    </span>
+  );
 };
 
 export const Skills = () => {
@@ -58,12 +68,9 @@ export const Skills = () => {
           <span className="w-3 h-3 rounded-full bg-destructive/60" />
           <span className="w-3 h-3 rounded-full bg-accent/60" />
           <span className="w-3 h-3 rounded-full bg-primary/60" />
-          <span className="font-mono text-xs text-muted-foreground ml-2">hard_skills.json</span>
+          <span className="font-mono text-xs text-muted-foreground ml-2">Habilidades Técnicas</span>
         </div>
         <div className="p-6">
-          <div className="font-mono text-xs text-muted-foreground mb-4">
-            <span className="text-primary">$</span> cat skills --type=hard
-          </div>
           <div className="flex flex-wrap gap-2">
             {hardSkills.map((skill, i) => (
               <motion.div
@@ -77,16 +84,39 @@ export const Skills = () => {
                   variant="outline"
                   className={`font-mono text-xs py-1.5 px-3 ${levelColor[skill.level]} cursor-default transition-all hover:shadow-glow`}
                 >
-                  <span className="mr-2 opacity-50">{levelLabel[skill.level]}</span>
+                  <LevelDots level={skill.level} />
                   {skill.name}
                 </Badge>
               </motion.div>
             ))}
           </div>
-          <div className="flex gap-6 mt-4 font-mono text-xs text-muted-foreground">
-            <span><span className="text-primary">███</span> Expert</span>
-            <span><span className="text-secondary">██░</span> Avançado</span>
-            <span><span className="text-accent">█░░</span> Intermediário</span>
+
+          {/* Legend */}
+          <div className="flex flex-wrap gap-x-6 gap-y-2 mt-5 pt-4 border-t border-primary/10">
+            <span className="flex items-center gap-2 text-xs text-muted-foreground">
+              <span className="flex gap-0.5">
+                <span className="w-1.5 h-1.5 rounded-full bg-primary" />
+                <span className="w-1.5 h-1.5 rounded-full bg-primary" />
+                <span className="w-1.5 h-1.5 rounded-full bg-primary" />
+              </span>
+              Expert
+            </span>
+            <span className="flex items-center gap-2 text-xs text-muted-foreground">
+              <span className="flex gap-0.5">
+                <span className="w-1.5 h-1.5 rounded-full bg-secondary" />
+                <span className="w-1.5 h-1.5 rounded-full bg-secondary" />
+                <span className="w-1.5 h-1.5 rounded-full bg-muted-foreground/20" />
+              </span>
+              Avançado
+            </span>
+            <span className="flex items-center gap-2 text-xs text-muted-foreground">
+              <span className="flex gap-0.5">
+                <span className="w-1.5 h-1.5 rounded-full bg-accent" />
+                <span className="w-1.5 h-1.5 rounded-full bg-muted-foreground/20" />
+                <span className="w-1.5 h-1.5 rounded-full bg-muted-foreground/20" />
+              </span>
+              Intermediário
+            </span>
           </div>
         </div>
       </motion.div>
@@ -103,12 +133,9 @@ export const Skills = () => {
           <span className="w-3 h-3 rounded-full bg-destructive/60" />
           <span className="w-3 h-3 rounded-full bg-accent/60" />
           <span className="w-3 h-3 rounded-full bg-primary/60" />
-          <span className="font-mono text-xs text-muted-foreground ml-2">soft_skills.md</span>
+          <span className="font-mono text-xs text-muted-foreground ml-2">Habilidades Interpessoais</span>
         </div>
         <div className="p-6">
-          <div className="font-mono text-xs text-muted-foreground mb-4">
-            <span className="text-primary">$</span> cat skills --type=soft
-          </div>
           <div className="flex flex-wrap gap-2">
             {softSkills.map((skill, i) => (
               <motion.div
