@@ -7,19 +7,13 @@ export const BackToTop = () => {
   const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
-    const toggleVisibility = () => {
-      setIsVisible(window.scrollY > 300);
-    };
-
+    const toggleVisibility = () => setIsVisible(window.scrollY > 300);
     window.addEventListener("scroll", toggleVisibility);
     return () => window.removeEventListener("scroll", toggleVisibility);
   }, []);
 
   const scrollToTop = () => {
-    window.scrollTo({
-      top: 0,
-      behavior: "smooth",
-    });
+    window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
   return (
@@ -33,11 +27,11 @@ export const BackToTop = () => {
         >
           <Button
             size="icon"
-            className="w-12 h-12 rounded-full bg-gradient-primary hover:shadow-glow-lg transition-all"
+            className="w-10 h-10 rounded bg-primary text-primary-foreground hover:shadow-glow transition-all font-mono"
             onClick={scrollToTop}
             aria-label="Voltar ao topo"
           >
-            <ArrowUp className="w-5 h-5" />
+            <ArrowUp className="w-4 h-4" />
           </Button>
         </motion.div>
       )}
