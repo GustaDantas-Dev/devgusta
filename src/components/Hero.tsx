@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { ArrowRight, Terminal, MapPin, Briefcase } from "lucide-react";
+import { ArrowRight, Terminal, MapPin, Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 const titles = [
@@ -55,16 +55,8 @@ export const Hero = () => {
             transition={{ duration: 0.8 }}
             className="flex-1 order-2 lg:order-1"
           >
-            {/* Terminal prompt */}
-            <div className="font-mono text-sm text-muted-foreground mb-6">
-              <span className="text-primary">gld@portfolio</span>
-              <span className="text-muted-foreground">:</span>
-              <span className="text-secondary">~</span>
-              <span className="text-muted-foreground">$ cat about.md</span>
-            </div>
-
             <h1 className="font-display text-4xl md:text-5xl lg:text-6xl font-bold mb-4 leading-tight text-card-foreground">
-              Gustavo Lima
+              Gustavo
               <br />
               <span className="text-primary text-glow">Dantas</span>
             </h1>
@@ -85,16 +77,12 @@ export const Hero = () => {
             {/* Status badges */}
             <div className="flex flex-wrap gap-3 mb-8 font-mono text-xs">
               <span className="flex items-center gap-1.5 px-3 py-1.5 rounded border border-primary/20 bg-primary/5 text-primary">
-                <span className="w-2 h-2 rounded-full bg-primary animate-pulse" />
-                Disponível para projetos
+                <Search className="w-3 h-3" />
+                À procura de estágio em desenvolvimento ou vaga de Desenvolvedor Jr
               </span>
               <span className="flex items-center gap-1.5 px-3 py-1.5 rounded border border-border text-muted-foreground">
                 <MapPin className="w-3 h-3" />
                 Manaus, AM
-              </span>
-              <span className="flex items-center gap-1.5 px-3 py-1.5 rounded border border-border text-muted-foreground">
-                <Briefcase className="w-3 h-3" />
-                Freelancer
               </span>
             </div>
 
@@ -115,7 +103,7 @@ export const Hero = () => {
                 className="border-primary/30 text-primary hover:bg-primary/10 gap-2 font-mono text-sm"
                 onClick={() => scrollToSection("contato")}
               >
-                ./contato
+                Contato
               </Button>
             </div>
           </motion.div>
@@ -131,14 +119,10 @@ export const Hero = () => {
               <div className="w-56 h-56 md:w-72 md:h-72 rounded-lg border-2 border-primary/30 p-1.5 shadow-glow animate-float overflow-hidden">
                 <img
                   src="https://i.postimg.cc/jd268BTn/Screenshot-20251117-083135.jpg"
-                  alt="Gustavo Lima Dantas - Desenvolvedor Full-Stack"
+                  alt="Gustavo Dantas - Desenvolvedor Full-Stack"
                   className="w-full h-full object-cover rounded-md"
                   loading="eager"
                 />
-              </div>
-              {/* Terminal decoration */}
-              <div className="absolute -bottom-3 -right-3 font-mono text-xs text-primary/50 bg-background px-2 py-1 border border-primary/20 rounded">
-                v2.0.26
               </div>
               <div className="absolute -z-10 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 md:w-80 md:h-80 bg-primary/5 rounded-full blur-3xl" />
             </div>

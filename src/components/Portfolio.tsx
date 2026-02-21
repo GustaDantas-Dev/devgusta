@@ -12,9 +12,9 @@ export const Portfolio = () => {
   const [activeSection, setActiveSection] = useState<Section | null>(null);
 
   const sections = [
-    { id: "skills" as Section, label: "habilidades", icon: Code, cmd: "ls skills/" },
-    { id: "experience" as Section, label: "experiências", icon: Briefcase, cmd: "cat experience.log" },
-    { id: "projects" as Section, label: "projetos", icon: FolderKanban, cmd: "ls projects/" },
+    { id: "skills" as Section, label: "Habilidades", icon: Code },
+    { id: "experience" as Section, label: "Experiências", icon: Briefcase },
+    { id: "projects" as Section, label: "Projetos", icon: FolderKanban },
   ];
 
   return (
@@ -26,18 +26,14 @@ export const Portfolio = () => {
           viewport={{ once: true }}
           className="text-center mb-12"
         >
-          <div className="font-mono text-sm text-muted-foreground mb-3">
-            <span className="text-primary">$</span> cd ~/portfolio
-          </div>
           <h2 className="font-display text-4xl md:text-5xl font-bold mb-4 text-card-foreground">
             Meu <span className="text-primary text-glow">Portfólio</span>
           </h2>
           <p className="font-mono text-sm text-muted-foreground max-w-lg mx-auto">
-            // Explore habilidades, experiências e projetos
+            Explore minhas habilidades, experiências e projetos
           </p>
         </motion.div>
 
-        {/* Section Toggles - Terminal style */}
         <div className="flex flex-wrap justify-center gap-3 mb-12">
           {sections.map((section) => (
             <Button
@@ -50,13 +46,12 @@ export const Portfolio = () => {
               }`}
               onClick={() => setActiveSection(activeSection === section.id ? null : section.id)}
             >
-              <span className="text-xs opacity-60">$</span>
-              {section.cmd}
+              <section.icon className="w-4 h-4" />
+              {section.label}
             </Button>
           ))}
         </div>
 
-        {/* Content */}
         <div className="min-h-[400px]">
           {activeSection === "skills" && <Skills />}
           {activeSection === "experience" && <Experience />}
@@ -66,12 +61,11 @@ export const Portfolio = () => {
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              className="text-center py-20 font-mono"
+              className="text-center py-20"
             >
-              <div className="text-muted-foreground text-sm space-y-2">
-                <p><span className="text-primary">$</span> Selecione um comando acima para explorar</p>
-                <p className="text-xs opacity-50">awaiting input...</p>
-              </div>
+              <p className="text-muted-foreground text-sm font-mono">
+                Selecione uma opção acima para explorar
+              </p>
             </motion.div>
           )}
         </div>
