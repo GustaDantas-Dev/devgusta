@@ -1,57 +1,121 @@
-import { Rocket, Send } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
+import { ArrowRight, Terminal, MapPin, Briefcase } from "lucide-react";
+import { Button } from "@/components/ui/button";
+
+const titles = [
+  "Desenvolvedor Full-Stack",
+  "Especialista em IoT",
+  "Criador de Soluções Digitais",
+  "Analista de Sistemas",
+];
 
 export const Hero = () => {
-  const scrollToSection = (id: string) => {
-    const element = document.getElementById(id);
-    if (element) {
-      element.scrollIntoView({ behavior: "smooth" });
+  const [currentTitle, setCurrentTitle] = useState(0);
+  const [displayedText, setDisplayedText] = useState("");
+  const [isTyping, setIsTyping] = useState(true);
+
+  useEffect(() => {
+    const title = titles[currentTitle];
+
+    if (isTyping) {
+      if (displayedText.length < title.length) {
+        const timeout = setTimeout(() => {
+          setDisplayedText(title.slice(0, displayedText.length + 1));
+        }, 60);
+        return () => clearTimeout(timeout);
+      } else {
+        const timeout = setTimeout(() => setIsTyping(false), 2000);
+        return () => clearTimeout(timeout);
+      }
+    } else {
+      if (displayedText.length > 0) {
+        const timeout = setTimeout(() => {
+          setDisplayedText(displayedText.slice(0, -1));
+        }, 30);
+        return () => clearTimeout(timeout);
+      } else {
+        setCurrentTitle((prev) => (prev + 1) % titles.length);
+        setIsTyping(true);
+      }
     }
+  }, [displayedText, isTyping, currentTitle]);
+
+  const scrollToSection = (id: string) => {
+    document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
   };
 
   return (
     <section id="sobre" className="min-h-screen flex items-center pt-20 pb-12">
       <div className="container mx-auto px-4">
         <div className="flex flex-col lg:flex-row items-center gap-12 lg:gap-20">
-          {/* Text Content */}
           <motion.div
             initial={{ opacity: 0, x: -50 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.8 }}
-            className="flex-1 text-center lg:text-left order-2 lg:order-1"
+            className="flex-1 order-2 lg:order-1"
           >
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 leading-tight">
-              Desenvolvendo{" "}
-              <span className="bg-gradient-primary bg-clip-text text-transparent">
-                soluções digitais
-              </span>{" "}
-              que unem código e criatividade
+            {/* Terminal prompt */}
+            <div className="font-mono text-sm text-muted-foreground mb-6">
+              <span className="text-primary">gld@portfolio</span>
+              <span className="text-muted-foreground">:</span>
+              <span className="text-secondary">~</span>
+              <span className="text-muted-foreground">$ cat about.md</span>
+            </div>
+
+            <h1 className="font-display text-4xl md:text-5xl lg:text-6xl font-bold mb-4 leading-tight text-card-foreground">
+              Gustavo Lima
+              <br />
+              <span className="text-primary text-glow">Dantas</span>
             </h1>
-            
-            <p className="text-lg md:text-xl text-muted-foreground mb-8 max-w-2xl mx-auto lg:mx-0">
-              Sou <strong className="text-foreground">Gustavo Lima Dantas</strong>, desenvolvedor Full-Stack e especialista em IoT. 
-              Combino habilidades técnicas avançadas com visão criativa para criar experiências digitais inovadoras.
+
+            {/* Typing effect */}
+            <div className="font-mono text-lg md:text-xl text-secondary mb-6 h-8 flex items-center">
+              <span className="text-muted-foreground mr-2">&gt;</span>
+              <span>{displayedText}</span>
+              <span className="animate-pulse text-primary ml-0.5">█</span>
+            </div>
+
+            <p className="text-muted-foreground mb-4 max-w-xl font-mono text-sm leading-relaxed">
+              Combino habilidades técnicas avançadas com visão criativa para criar
+              experiências digitais inovadoras. Código limpo, automação inteligente
+              e soluções que funcionam.
             </p>
 
-            <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
+            {/* Status badges */}
+            <div className="flex flex-wrap gap-3 mb-8 font-mono text-xs">
+              <span className="flex items-center gap-1.5 px-3 py-1.5 rounded border border-primary/20 bg-primary/5 text-primary">
+                <span className="w-2 h-2 rounded-full bg-primary animate-pulse" />
+                Disponível para projetos
+              </span>
+              <span className="flex items-center gap-1.5 px-3 py-1.5 rounded border border-border text-muted-foreground">
+                <MapPin className="w-3 h-3" />
+                Manaus, AM
+              </span>
+              <span className="flex items-center gap-1.5 px-3 py-1.5 rounded border border-border text-muted-foreground">
+                <Briefcase className="w-3 h-3" />
+                Freelancer
+              </span>
+            </div>
+
+            <div className="flex flex-col sm:flex-row gap-3">
               <Button
                 size="lg"
-                className="bg-gradient-primary hover:shadow-glow-lg transition-all duration-300 gap-2"
+                className="bg-primary text-primary-foreground hover:bg-primary/90 hover:shadow-glow transition-all duration-300 gap-2 font-mono text-sm"
                 onClick={() => scrollToSection("portfolio")}
               >
-                <Rocket className="h-5 w-5" />
+                <Terminal className="h-4 w-4" />
                 Ver Portfólio
+                <ArrowRight className="h-4 w-4" />
               </Button>
-              
+
               <Button
                 size="lg"
                 variant="outline"
-                className="border-border hover:bg-muted gap-2"
+                className="border-primary/30 text-primary hover:bg-primary/10 gap-2 font-mono text-sm"
                 onClick={() => scrollToSection("contato")}
               >
-                <Send className="h-5 w-5" />
-                Contato
+                ./contato
               </Button>
             </div>
           </motion.div>
@@ -64,17 +128,19 @@ export const Hero = () => {
             className="flex-shrink-0 order-1 lg:order-2"
           >
             <div className="relative">
-              <div className="w-64 h-64 md:w-80 md:h-80 rounded-full bg-gradient-primary p-2 shadow-glow animate-float">
+              <div className="w-56 h-56 md:w-72 md:h-72 rounded-lg border-2 border-primary/30 p-1.5 shadow-glow animate-float overflow-hidden">
                 <img
                   src="https://i.postimg.cc/jd268BTn/Screenshot-20251117-083135.jpg"
                   alt="Gustavo Lima Dantas - Desenvolvedor Full-Stack"
-                  className="w-full h-full object-cover rounded-full"
+                  className="w-full h-full object-cover rounded-md"
                   loading="eager"
                 />
               </div>
-              
-              {/* Decorative Elements */}
-              <div className="absolute -z-10 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-72 h-72 md:w-96 md:h-96 bg-primary/20 rounded-full blur-3xl" />
+              {/* Terminal decoration */}
+              <div className="absolute -bottom-3 -right-3 font-mono text-xs text-primary/50 bg-background px-2 py-1 border border-primary/20 rounded">
+                v2.0.26
+              </div>
+              <div className="absolute -z-10 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 md:w-80 md:h-80 bg-primary/5 rounded-full blur-3xl" />
             </div>
           </motion.div>
         </div>

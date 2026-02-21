@@ -14,93 +14,58 @@ export const ParticlesBackground = () => {
     });
   }, []);
 
-  const particlesLoaded = async (container?: Container): Promise<void> => {
-    console.log("Particles loaded", container);
-  };
+  const particlesLoaded = async (container?: Container): Promise<void> => {};
 
   const options: ISourceOptions = useMemo(
     () => ({
-      background: {
-        color: {
-          value: "transparent",
-        },
-      },
-      fpsLimit: 120,
+      background: { color: { value: "transparent" } },
+      fpsLimit: 60,
       interactivity: {
         events: {
-          onClick: {
-            enable: true,
-            mode: "push",
-          },
-          onHover: {
-            enable: true,
-            mode: "repulse",
-          },
+          onHover: { enable: true, mode: "grab" },
         },
         modes: {
-          push: {
-            quantity: 4,
-          },
-          repulse: {
-            distance: 150,
-            duration: 0.4,
-          },
+          grab: { distance: 140, links: { opacity: 0.5 } },
         },
       },
       particles: {
-        color: {
-          value: "#00c2ff",
-        },
+        color: { value: "#00ff00" },
         links: {
-          color: "#00c2ff",
+          color: "#00ff00",
           distance: 150,
           enable: true,
-          opacity: 0.2,
+          opacity: 0.08,
           width: 1,
         },
         move: {
           direction: "none",
           enable: true,
-          outModes: {
-            default: "out",
-          },
+          outModes: { default: "out" },
           random: true,
-          speed: 2,
+          speed: 0.8,
           straight: false,
         },
         number: {
-          density: {
-            enable: true,
-          },
-          value: typeof window !== 'undefined' && window.innerWidth < 768 ? 30 : 60,
+          density: { enable: true },
+          value: typeof window !== "undefined" && window.innerWidth < 768 ? 20 : 40,
         },
-        opacity: {
-          value: 0.5,
-          random: true,
-        },
-        shape: {
-          type: "circle",
-        },
-        size: {
-          value: { min: 1, max: 3 },
-          random: true,
-        },
+        opacity: { value: 0.15, random: true },
+        shape: { type: "circle" },
+        size: { value: { min: 1, max: 2 }, random: true },
       },
       detectRetina: true,
     }),
     [],
   );
 
-  if (init) {
-    return (
-      <Particles
-        id="tsparticles"
-        particlesLoaded={particlesLoaded}
-        options={options}
-        className="fixed inset-0 -z-10"
-      />
-    );
-  }
+  if (!init) return null;
 
-  return null;
+  return (
+    <Particles
+      id="tsparticles"
+      particlesLoaded={particlesLoaded}
+      options={options}
+      className="fixed inset-0 -z-10"
+    />
+  );
 };

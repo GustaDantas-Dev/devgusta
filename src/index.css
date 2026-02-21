@@ -2,49 +2,52 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
-All colors MUST be HSL.
-*/
-
 @layer base {
   :root {
-    --background: 240 10% 3.9%;
-    --foreground: 0 0% 98%;
+    --background: 220 20% 4%;
+    --foreground: 120 100% 80%;
 
-    --card: 240 10% 8%;
-    --card-foreground: 0 0% 98%;
+    --card: 220 20% 7%;
+    --card-foreground: 120 40% 85%;
 
-    --popover: 240 10% 8%;
-    --popover-foreground: 0 0% 98%;
+    --popover: 220 20% 7%;
+    --popover-foreground: 120 40% 85%;
 
-    --primary: 195 100% 50%;
-    --primary-foreground: 0 0% 100%;
-    
-    --secondary: 270 75% 60%;
-    --secondary-foreground: 0 0% 100%;
+    --primary: 120 100% 50%;
+    --primary-foreground: 220 20% 4%;
 
-    --muted: 240 10% 15%;
-    --muted-foreground: 240 5% 64.9%;
+    --secondary: 180 100% 50%;
+    --secondary-foreground: 220 20% 4%;
 
-    --accent: 152 100% 50%;
-    --accent-foreground: 240 10% 3.9%;
+    --muted: 220 15% 12%;
+    --muted-foreground: 120 10% 55%;
 
-    --destructive: 0 84.2% 60.2%;
+    --accent: 50 100% 50%;
+    --accent-foreground: 220 20% 4%;
+
+    --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 98%;
 
-    --border: 240 10% 15%;
-    --input: 240 10% 15%;
-    --ring: 195 100% 50%;
+    --border: 120 30% 15%;
+    --input: 120 20% 12%;
+    --ring: 120 100% 50%;
 
-    --radius: 0.75rem;
-    
-    /* Custom variables for portfolio */
-    --gradient-primary: linear-gradient(135deg, hsl(195 100% 50%), hsl(270 75% 60%));
-    --gradient-accent: linear-gradient(90deg, hsl(195 100% 50%), hsl(152 100% 50%));
-    --glass: rgba(255, 255, 255, 0.05);
-    --glass-border: rgba(255, 255, 255, 0.1);
-    --shadow-glow: 0 20px 60px rgba(0, 194, 255, 0.3);
-    --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    --radius: 0.5rem;
+
+    /* Terminal custom vars */
+    --terminal-green: hsl(120 100% 50%);
+    --terminal-cyan: hsl(180 100% 50%);
+    --terminal-amber: hsl(50 100% 50%);
+    --terminal-dim: hsl(120 10% 55%);
+    --glow-green: 0 0 20px hsla(120, 100%, 50%, 0.3), 0 0 60px hsla(120, 100%, 50%, 0.1);
+    --glow-cyan: 0 0 20px hsla(180, 100%, 50%, 0.3), 0 0 60px hsla(180, 100%, 50%, 0.1);
+    --scanline: repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 2px,
+      hsla(120, 100%, 50%, 0.03) 2px,
+      hsla(120, 100%, 50%, 0.03) 4px
+    );
   }
 }
 
@@ -55,21 +58,84 @@ All colors MUST be HSL.
 
   body {
     @apply bg-background text-foreground antialiased;
-    background: radial-gradient(ellipse at top, hsl(240 20% 12%), hsl(240 10% 3.9%));
+    font-family: 'JetBrains Mono', 'Fira Code', monospace;
+    background: 
+      var(--scanline),
+      radial-gradient(ellipse at top, hsl(220 25% 8%), hsl(220 20% 4%));
     min-height: 100vh;
   }
-  
+
   html {
     scroll-behavior: smooth;
   }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Space Grotesk', sans-serif;
+  }
+
+  ::selection {
+    background: hsl(120 100% 50% / 0.3);
+    color: hsl(120 100% 80%);
+  }
+
+  ::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: hsl(220 20% 4%);
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: hsl(120 100% 50% / 0.3);
+    border-radius: 3px;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: hsl(120 100% 50% / 0.5);
+  }
 }
 
-@layer base {
-  * {
-    @apply border-border;
-  }
+/* Terminal prompt animation */
+@keyframes blink {
+  0%, 50% { opacity: 1; }
+  51%, 100% { opacity: 0; }
+}
 
-  body {
-    @apply bg-background text-foreground;
+@keyframes typing {
+  from { width: 0; }
+  to { width: 100%; }
+}
+
+@keyframes glow-pulse {
+  0%, 100% { 
+    text-shadow: 0 0 10px hsla(120, 100%, 50%, 0.5);
   }
+  50% { 
+    text-shadow: 0 0 20px hsla(120, 100%, 50%, 0.8), 0 0 40px hsla(120, 100%, 50%, 0.3);
+  }
+}
+
+.cursor-blink::after {
+  content: '█';
+  animation: blink 1s step-end infinite;
+  color: hsl(120 100% 50%);
+}
+
+.text-glow {
+  animation: glow-pulse 3s ease-in-out infinite;
+}
+
+.terminal-border {
+  border: 1px solid hsl(120 100% 50% / 0.2);
+  box-shadow: 
+    inset 0 0 30px hsla(120, 100%, 50%, 0.03),
+    0 0 15px hsla(120, 100%, 50%, 0.05);
+}
+
+.terminal-border:hover {
+  border-color: hsl(120 100% 50% / 0.4);
+  box-shadow: 
+    inset 0 0 30px hsla(120, 100%, 50%, 0.05),
+    0 0 25px hsla(120, 100%, 50%, 0.1);
 }

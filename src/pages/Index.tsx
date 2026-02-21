@@ -10,29 +10,37 @@ const Index = () => {
     <div className="relative min-h-screen">
       <ParticlesBackground />
       <Header />
-      
+
       <main>
         <Hero />
         <Portfolio />
-        
+
         <section id="contato" className="py-20">
           <div className="container mx-auto px-4">
-            <h2 className="text-4xl md:text-5xl font-bold text-center mb-4">
-              <span className="bg-gradient-primary bg-clip-text text-transparent">
-                Vamos Conversar?
-              </span>
-            </h2>
-            <p className="text-center text-muted-foreground mb-12 max-w-2xl mx-auto">
-              Estou sempre aberto a novos projetos e oportunidades. Entre em contato!
-            </p>
+            <div className="text-center mb-12">
+              <div className="font-mono text-sm text-muted-foreground mb-3">
+                <span className="text-primary">$</span> ./contato --open
+              </div>
+              <h2 className="font-display text-4xl md:text-5xl font-bold mb-4 text-card-foreground">
+                Vamos <span className="text-primary text-glow">Conversar</span>?
+              </h2>
+              <p className="font-mono text-sm text-muted-foreground max-w-lg mx-auto">
+                // Aberto a novos projetos e oportunidades
+              </p>
+            </div>
             <Contact />
           </div>
         </section>
       </main>
 
-      <footer className="border-t border-border bg-background/80 backdrop-blur-lg py-8 mt-20">
-        <div className="container mx-auto px-4 text-center text-muted-foreground">
-          <p>© 2024 Gustavo Lima Dantas | Desenvolvido com 💙 e código limpo</p>
+      <footer className="border-t border-primary/10 bg-background/80 backdrop-blur-lg py-6 mt-20">
+        <div className="container mx-auto px-4 text-center font-mono text-xs text-muted-foreground">
+          <p>
+            <span className="text-primary">©</span> 2024 Gustavo Lima Dantas{" "}
+            <span className="text-primary">|</span> Built with{" "}
+            <span className="text-primary">{"<code />"}</span> and{" "}
+            <span className="text-secondary">💙</span>
+          </p>
         </div>
       </footer>
 
