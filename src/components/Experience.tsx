@@ -2,10 +2,9 @@ import { motion } from "framer-motion";
 
 const experiences = [
   {
-    period: "2023 - Presente",
     title: "Desenvolvedor Fullstack / Criador de Soluções Digitais",
     company: "Autônomo – múltiplos clientes",
-    status: "RUNNING",
+    status: "ATUAL",
     description: [
       "Sites profissionais para TH Rastreamento, LETRAN, barbearia e PMEs",
       "Portfólios profissionais para filmmaker, advogado e arquiteto",
@@ -16,10 +15,9 @@ const experiences = [
     ],
   },
   {
-    period: "2022 - 2023",
     title: "Analista de Sistemas Jr",
     company: "Perfil direcionado para análise de sistemas",
-    status: "COMPLETED",
+    status: "CONCLUÍDO",
     description: [
       "Coleta e análise de requisitos das áreas de negócio",
       "Documentação clara (casos de uso, fluxos, requisitos)",
@@ -42,34 +40,32 @@ export const Experience = () => {
           transition={{ duration: 0.5, delay: index * 0.15 }}
           className="terminal-border rounded-lg bg-card/50 backdrop-blur overflow-hidden"
         >
-          {/* Terminal title bar */}
           <div className="flex items-center justify-between px-4 py-2 border-b border-primary/10 bg-primary/5">
             <div className="flex items-center gap-2">
               <span className="w-3 h-3 rounded-full bg-destructive/60" />
               <span className="w-3 h-3 rounded-full bg-accent/60" />
               <span className="w-3 h-3 rounded-full bg-primary/60" />
               <span className="font-mono text-xs text-muted-foreground ml-2">
-                experience_{index}.log
+                {exp.title.split(" / ")[0].toLowerCase().replace(/\s+/g, "_")}
               </span>
             </div>
             <span
               className={`font-mono text-xs px-2 py-0.5 rounded ${
-                exp.status === "RUNNING"
+                exp.status === "ATUAL"
                   ? "bg-primary/10 text-primary border border-primary/30"
                   : "bg-muted text-muted-foreground border border-border"
               }`}
             >
-              [{exp.status}]
+              {exp.status}
             </span>
           </div>
 
           <div className="p-6">
-            <div className="font-mono text-xs text-primary mb-2">{exp.period}</div>
             <h3 className="font-display text-xl font-bold text-card-foreground mb-1">
               {exp.title}
             </h3>
             <p className="font-mono text-sm text-muted-foreground mb-4">
-              @ {exp.company}
+              {exp.company}
             </p>
 
             <div className="space-y-1.5 font-mono text-sm">

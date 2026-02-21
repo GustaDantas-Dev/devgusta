@@ -19,9 +19,9 @@ export const Header = () => {
   };
 
   const navLinks = [
-    { id: "sobre", label: "./sobre" },
-    { id: "portfolio", label: "./portfolio" },
-    { id: "contato", label: "./contato" },
+    { id: "sobre", label: "Sobre" },
+    { id: "portfolio", label: "Portfólio" },
+    { id: "contato", label: "Contato" },
   ];
 
   return (
@@ -41,10 +41,9 @@ export const Header = () => {
           onClick={() => scrollToSection("sobre")}
         >
           <Terminal className="w-5 h-5 text-primary" />
-          <span className="text-lg font-mono font-bold text-primary text-glow">
-            gld@dev
+          <span className="text-lg font-display font-bold text-primary text-glow">
+            Gustavo Dantas
           </span>
-          <span className="text-muted-foreground font-mono text-sm">:~$</span>
         </motion.div>
 
         <div className="hidden md:flex items-center gap-1">
@@ -84,7 +83,6 @@ export const Header = () => {
                     onClick={() => scrollToSection(link.id)}
                     className="font-mono text-sm text-muted-foreground hover:text-primary transition-colors text-left py-2 border-b border-primary/10 last:border-0"
                   >
-                    <span className="text-primary mr-2">$</span>
                     {link.label}
                   </button>
                 ))}
