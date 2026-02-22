@@ -1,0 +1,985 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Amostra de Cardápio + Chatbot</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #7B2CBF 0%, #5A189A 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .chat-container {
+            width: 100%;
+            max-width: 500px;
+            height: 700px;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 10px 50px rgba(0, 0, 0, 0.3);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+        .chat-header {
+            background: linear-gradient(135deg, #7B2CBF 0%, #9D4EDD 100%);
+            color: #FFD60A;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+        }
+        .chat-header h2 {
+            font-size: 1.8em;
+            margin-bottom: 5px;
+        }
+        .chat-header p {
+            font-size: 0.9em;
+            color: #FFC300;
+        }
+        .chat-messages {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            background: #f5f5f5;
+        }
+        .message {
+            margin-bottom: 15px;
+            animation: slideIn 0.3s;
+        }
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        .bot-message {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+        }
+        .bot-avatar {
+            width: 40px;
+            height: 40px;
+            background: #7B2CBF;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5em;
+            flex-shrink: 0;
+        }
+        .bot-text {
+            background: white;
+            padding: 12px 16px;
+            border-radius: 15px 15px 15px 5px;
+            max-width: 75%;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            color: #333;
+            line-height: 1.5;
+        }
+        .user-message {
+            display: flex;
+            justify-content: flex-end;
+        }
+        .user-text {
+            background: #7B2CBF;
+            color: #FFD60A;
+            padding: 12px 16px;
+            border-radius: 15px 15px 5px 15px;
+            max-width: 75%;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        .options-container {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-top: 10px;
+        }
+        .option-btn {
+            background: #FFD60A;
+            color: #5A189A;
+            border: none;
+            padding: 12px 16px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s;
+            text-align: left;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        .option-btn:hover {
+            background: #FFC300;
+            transform: translateX(5px);
+        }
+        .item-btn {
+            background: white;
+            color: #5A189A;
+            border: 2px solid #7B2CBF;
+            padding: 12px 16px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s;
+            text-align: left;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            margin-bottom: 8px;
+            width: 100%;
+        }
+        .item-btn:hover {
+            background: #7B2CBF;
+            color: white;
+            transform: translateX(5px);
+        }
+        .pizza-size-btn {
+            background: white;
+            color: #5A189A;
+            border: 2px solid #7B2CBF;
+            padding: 10px 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s;
+            text-align: center;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            margin: 5px;
+            flex: 1;
+        }
+        .pizza-size-btn:hover {
+            background: #7B2CBF;
+            color: white;
+        }
+        .pizza-sizes-container {
+            display: flex;
+            gap: 5px;
+            margin: 10px 0;
+        }
+        .chat-input-area {
+            padding: 15px;
+            background: white;
+            border-top: 1px solid #ddd;
+            display: flex;
+            gap: 10px;
+        }
+        .chat-input {
+            flex: 1;
+            padding: 12px;
+            border: 2px solid #7B2CBF;
+            border-radius: 25px;
+            font-size: 1em;
+            outline: none;
+        }
+        .chat-input:focus {
+            border-color: #9D4EDD;
+        }
+        .send-btn {
+            background: #7B2CBF;
+            color: #FFD60A;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+        .send-btn:hover {
+            background: #9D4EDD;
+            transform: scale(1.05);
+        }
+        .typing-indicator {
+            display: none;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 0;
+        }
+        .typing-indicator.active {
+            display: flex;
+        }
+        .typing-dots {
+            display: flex;
+            gap: 4px;
+        }
+        .dot {
+            width: 8px;
+            height: 8px;
+            background: #7B2CBF;
+            border-radius: 50%;
+            animation: bounce 1.4s infinite;
+        }
+        .dot:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+        .dot:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+        @keyframes bounce {
+            0%, 60%, 100% {
+                transform: translateY(0);
+            }
+            30% {
+                transform: translateY(-10px);
+            }
+        }
+        .price-highlight {
+            color: #7B2CBF;
+            font-weight: bold;
+        }
+        .whatsapp-btn-chat {
+            background: #25D366;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: bold;
+            margin-top: 10px;
+            width: 100%;
+            transition: all 0.3s;
+        }
+        .whatsapp-btn-chat:hover {
+            background: #20BA5A;
+            transform: scale(1.02);
+        }
+        .cart-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 0;
+            border-bottom: 1px solid #eee;
+        }
+        .cart-item-info {
+            flex: 1;
+        }
+        .cart-item-actions {
+            display: flex;
+            gap: 8px;
+        }
+        .cart-action-btn {
+            background: #7B2CBF;
+            color: white;
+            border: none;
+            padding: 6px 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.8em;
+            transition: all 0.3s;
+        }
+        .cart-action-btn:hover {
+            background: #9D4EDD;
+        }
+        .cart-action-btn.remove {
+            background: #e74c3c;
+        }
+        .cart-action-btn.remove:hover {
+            background: #c0392b;
+        }
+        .cart-total {
+            font-weight: bold;
+            text-align: right;
+            margin-top: 10px;
+            padding-top: 10px;
+            border-top: 2px solid #7B2CBF;
+            font-size: 1.1em;
+            color: #7B2CBF;
+        }
+        .empty-cart-message {
+            text-align: center;
+            color: #7B2CBF;
+            font-style: italic;
+            padding: 20px;
+        }
+        .item-details {
+            font-size: 0.9em;
+            color: #666;
+            margin: 5px 0;
+        }
+        .total-price {
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #7B2CBF;
+            text-align: center;
+            margin: 10px 0;
+            padding: 10px;
+            background: #f8f8f8;
+            border-radius: 10px;
+            border: 2px solid #7B2CBF;
+        }
+    </style>
+</head>
+<body>
+    <div class="chat-container">
+        <div class="chat-header">
+            <h2>🌟 Patrick Lanches</h2>
+            <p>Seu assistente virtual</p>
+        </div>
+        <div class="chat-messages" id="chatMessages">
+            <div class="message bot-message">
+                <div class="bot-avatar">⭐</div>
+                <div class="bot-text">
+                    Olá! Bem-vindo ao Patrick Lanches! 🌊<br><br>
+                    Sou o seu assistente virtual e estou aqui para te ajudar a fazer seu pedido!<br><br>
+                    O que você gostaria hoje?
+                    <div class="options-container">
+                        <button class="option-btn" onclick="selectCategory('pizzas')">🍕 Ver Pizzas</button>
+                        <button class="option-btn" onclick="selectCategory('sanduiches')">🍔 Ver Sanduíches</button>
+                        <button class="option-btn" onclick="selectCategory('kikao')">🌭 Ver Kikão</button>
+                        <button class="option-btn" onclick="selectCategory('combos')">🚤 Ver Combos</button>
+                        <button class="option-btn" onclick="selectCategory('refeicoes')">🍱 Ver Refeições</button>
+                        <button class="option-btn" onclick="selectCategory('bebidas')">🥤 Ver Bebidas</button>
+                        <button class="option-btn" onclick="viewCart()">🛒 Ver Carrinho</button>
+                        <button class="option-btn" onclick="openWhatsAppDirect()">💬 Falar com Atendente</button>
+                    </div>
+                </div>
+            </div>
+            <div class="typing-indicator" id="typingIndicator">
+                <div class="bot-avatar">⭐</div>
+                <div class="typing-dots">
+                    <div class="dot"></div>
+                    <div class="dot"></div>
+                    <div class="dot"></div>
+                </div>
+            </div>
+        </div>
+        <div class="chat-input-area">
+            <input type="text" class="chat-input" id="userInput" placeholder="Digite sua mensagem..." onkeypress="handleKeyPress(event)">
+            <button class="send-btn" onclick="sendMessage()">Enviar</button>
+        </div>
+    </div>
+
+    <script>
+        let cart = [];
+        let currentCategory = null;
+        let customerData = { name: '', phone: '', address: '', reference: '', observations: '' };
+        let collectingData = false;
+        let currentDataStep = '';
+        let tempItem = null;
+
+        const menuData = {
+            pizzas: { name: 'Pizzas', emoji: '🍕', items: [
+                { 
+                    name: 'Mussarela', 
+                    prices: {
+                        brotinho: 10,
+                        media: 30,
+                        grande: 40
+                    },
+                    desc: 'Molho, mussarela, tomate, pimentão, azeitona e orégano' 
+                },
+                { 
+                    name: 'Calabresa', 
+                    prices: {
+                        brotinho: 10,
+                        media: 30,
+                        grande: 40
+                    },
+                    desc: 'Molho, mussarela, calabresa, cebola, tomate' 
+                },
+                { 
+                    name: 'Portuguesa', 
+                    prices: {
+                        brotinho: 10,
+                        media: 30,
+                        grande: 40
+                    },
+                    desc: 'Presunto, calabresa, ovo, seleta, milho' 
+                },
+                { 
+                    name: 'Frango com Catupiry', 
+                    prices: {
+                        brotinho: 15,
+                        grande: 62
+                    },
+                    desc: 'Frango, catupiry, milho e mussarela' 
+                },
+                { 
+                    name: 'Quatro Queijos', 
+                    prices: {
+                        brotinho: 15,
+                        grande: 62
+                    },
+                    desc: 'Mussarela, catupiry, queijo prato, queijo coalho' 
+                }
+            ]},
+            sanduiches: { name: 'Sanduíches', emoji: '🍔', items: [
+                { name: 'X-Patrick', price: 26.00, desc: 'Blend 100g, bacon, cheddar, presunto, cebola caramelizada' },
+                { name: 'X-Bob Esponja', price: 21.00, desc: 'Sanduíche artesanal especial' },
+                { name: 'X-Tudo', price: 20.00, desc: 'Hambúrguer completo' },
+                { name: 'X-Filé Tudo', price: 32.00, desc: 'Filé completo com todos os acompanhamentos' },
+                { name: 'X-Salada', price: 10.00, desc: 'Hambúrguer com salada' }
+            ]},
+            kikao: { name: 'Kikão', emoji: '🌭', items: [
+                { name: 'Kikão Simples', price: 8.00, desc: 'Com queijo ralado e batata palha' },
+                { name: 'Kikão Especial', price: 12.00, desc: 'Com proteína especial' },
+                { name: 'Kikão Filé', price: 16.00, desc: 'Com filé de carne' },
+                { name: 'Kikão Frango', price: 15.00, desc: 'Com frango desfiado' },
+                { name: 'Kikão Picanha', price: 16.00, desc: 'Com picanha' }
+            ]},
+            combos: { name: 'Combos de Barca', emoji: '🚤', items: [
+                { name: 'Barca 1', price: 87.00, desc: 'X-Filé + X-Picanha + X-Tudo + batata + refri 1,5L' },
+                { name: 'Barca 2', price: 62.00, desc: 'X-Salada + X-Bacon + X-Calabresa + batata + refri 1,5L' },
+                { name: 'Barca 5', price: 67.00, desc: '3 X Artesanais + batata + refri 1,5L' },
+                { name: 'Barca 10', price: 59.00, desc: '4 X-Salada + batata + refri 1,5L' }
+            ]},
+            refeicoes: { name: 'Refeições', emoji: '🍱', items: [
+                { name: 'Comida Caseira Tradicional', price: 25.00, desc: 'Arroz, feijão, macarrão, farofa, salada' },
+                { name: 'Filé Grelhado', price: 35.00, desc: 'Com arroz, farofa, batata frita e salada' },
+                { name: 'Yakisoba', price: 55.00, desc: 'Macarrão com legumes e proteína (inteira)' },
+                { name: 'Sopa de Carne', price: 18.00, desc: 'Sopa caseira' }
+            ]},
+            bebidas: { name: 'Bebidas', emoji: '🥤', items: [
+                { name: 'Vitamina de Abacate', price: 10.00, desc: 'Vitamina natural' },
+                { name: 'Vitamina Mista', price: 12.00, desc: 'Mamão, banana e aveia' },
+                { name: 'Coca-Cola 2L', price: 15.00, desc: 'Refrigerante' },
+                { name: 'Guaraná 2L', price: 10.00, desc: 'Refrigerante' },
+                { name: 'Refrigerante Lata', price: 5.00, desc: '350ml' }
+            ]}
+        };
+
+        function addMessage(text, isUser = false) {
+            const messagesDiv = document.getElementById('chatMessages');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${isUser ? 'user-message' : 'bot-message'}`;
+            messageDiv.innerHTML = isUser ? `<div class="user-text">${text}</div>` : `<div class="bot-avatar">⭐</div><div class="bot-text">${text}</div>`;
+            messagesDiv.appendChild(messageDiv);
+            messagesDiv.scrollTop = messagesDiv.scrollHeight;
+        }
+
+        function showTyping() {
+            document.getElementById('typingIndicator').classList.add('active');
+            document.getElementById('chatMessages').scrollTop = document.getElementById('chatMessages').scrollHeight;
+        }
+
+        function hideTyping() {
+            document.getElementById('typingIndicator').classList.remove('active');
+        }
+
+        function selectCategory(category) {
+            addMessage(`Ver ${menuData[category].name}`, true);
+            currentCategory = category;
+            showTyping();
+            setTimeout(() => {
+                hideTyping();
+                showCategoryItems(category);
+            }, 1000);
+        }
+
+        function showCategoryItems(category) {
+            const data = menuData[category];
+            let message = `<strong>${data.emoji} ${data.name}</strong><br><br>`;
+            
+            data.items.forEach((item, index) => {
+                let priceText = '';
+                if (item.prices) {
+                    // Para pizzas, mostra os três tamanhos
+                    priceText = `Brotinho: R$ ${item.prices.brotinho} | Média: R$ ${item.prices.media || '--'} | Grande: R$ ${item.prices.grande}`;
+                } else {
+                    // Para outros itens
+                    priceText = `R$ ${item.price.toFixed(2)}`;
+                }
+                
+                message += `
+                <button class="item-btn" onclick="selectItem('${category}', ${index})">
+                    <strong>${item.name}</strong><br>
+                    <span class="price-highlight">${priceText}</span><br>
+                    <div class="item-details">${item.desc}</div>
+                </button>`;
+            });
+            
+            message += `<div class="options-container">
+                <button class="option-btn" onclick="viewCart()">📋 Ver Carrinho (${cart.length})</button>
+                <button class="option-btn" onclick="backToMainMenu()">🏠 Voltar ao Menu Principal</button>
+            </div>`;
+            addMessage(message);
+        }
+
+        function selectItem(category, itemIndex) {
+            const item = menuData[category].items[itemIndex];
+            addMessage(`Selecionar: ${item.name}`, true);
+            tempItem = { ...item, category: category, originalIndex: itemIndex };
+            
+            showTyping();
+            setTimeout(() => {
+                hideTyping();
+                
+                if (category === 'pizzas') {
+                    // Para pizzas, mostrar opções de tamanho
+                    showPizzaSizes(item);
+                } else {
+                    // Para outros itens, perguntar quantidade diretamente
+                    askForQuantity(item);
+                }
+            }, 1000);
+        }
+
+        function showPizzaSizes(item) {
+            let message = `Ótima escolha! ✨<br><br>
+                <strong>${item.name}</strong><br>
+                <div class="item-details">${item.desc}</div><br>
+                <strong>Escolha o tamanho:</strong><br>`;
+            
+            message += `<div class="pizza-sizes-container">`;
+            
+            if (item.prices.brotinho) {
+                message += `<button class="pizza-size-btn" onclick="selectPizzaSize('brotinho', ${item.prices.brotinho})">
+                    Brotinho<br>R$ ${item.prices.brotinho}
+                </button>`;
+            }
+            
+            if (item.prices.media) {
+                message += `<button class="pizza-size-btn" onclick="selectPizzaSize('media', ${item.prices.media})">
+                    Média<br>R$ ${item.prices.media}
+                </button>`;
+            }
+            
+            if (item.prices.grande) {
+                message += `<button class="pizza-size-btn" onclick="selectPizzaSize('grande', ${item.prices.grande})">
+                    Grande<br>R$ ${item.prices.grande}
+                </button>`;
+            }
+            
+            message += `</div>`;
+            message += `<div class="options-container">
+                <button class="option-btn" onclick="backToCategory()">↩️ Voltar</button>
+            </div>`;
+            
+            addMessage(message);
+        }
+
+        function selectPizzaSize(size, price) {
+            const sizeNames = {
+                brotinho: 'Brotinho',
+                media: 'Média',
+                grande: 'Grande'
+            };
+            
+            tempItem.selectedSize = size;
+            tempItem.selectedPrice = price;
+            tempItem.displayName = `${tempItem.name} (${sizeNames[size]})`;
+            
+            addMessage(`Tamanho: ${sizeNames[size]} - R$ ${price}`, true);
+            askForQuantity(tempItem);
+        }
+
+        function askForQuantity(item) {
+            const price = item.selectedPrice || item.price;
+            const displayName = item.displayName || item.name;
+            
+            const message = `✨ <strong>${displayName}</strong><br>
+                <span class="price-highlight">R$ ${price.toFixed(2)}</span><br><br>
+                <strong>Quantos você deseja?</strong><br><br>
+                <div class="options-container">
+                    <button class="option-btn" onclick="setQuantity(1)">1</button>
+                    <button class="option-btn" onclick="setQuantity(2)">2</button>
+                    <button class="option-btn" onclick="setQuantity(3)">3</button>
+                    <button class="option-btn" onclick="setQuantity(4)">4</button>
+                    <button class="option-btn" onclick="setQuantity(5)">5</button>
+                    <button class="option-btn" onclick="customQuantity()">Outra quantidade</button>
+                    <button class="option-btn" onclick="backToCategory()">↩️ Voltar</button>
+                </div>`;
+            addMessage(message);
+            collectingData = true;
+            currentDataStep = 'quantity';
+        }
+
+        function setQuantity(quantity) {
+            addMessage(`Quantidade: ${quantity}`, true);
+            addToCart(tempItem, quantity);
+        }
+
+        function customQuantity() {
+            addMessage('Digite a quantidade desejada:', true);
+            currentDataStep = 'custom_quantity';
+        }
+
+        function backToCategory() {
+            if (currentCategory) {
+                addMessage('Voltar para o cardápio', true);
+                showTyping();
+                setTimeout(() => {
+                    hideTyping();
+                    showCategoryItems(currentCategory);
+                }, 1000);
+            } else {
+                backToMainMenu();
+            }
+        }
+
+        function backToMainMenu() {
+            addMessage('Voltar ao menu principal', true);
+            collectingData = false;
+            currentCategory = null;
+            showTyping();
+            setTimeout(() => {
+                hideTyping();
+                const message = `O que mais você gostaria de ver? 😊<div class="options-container">
+                    <button class="option-btn" onclick="selectCategory('pizzas')">🍕 Ver Pizzas</button>
+                    <button class="option-btn" onclick="selectCategory('sanduiches')">🍔 Ver Sanduíches</button>
+                    <button class="option-btn" onclick="selectCategory('kikao')">🌭 Ver Kikão</button>
+                    <button class="option-btn" onclick="selectCategory('combos')">🚤 Ver Combos</button>
+                    <button class="option-btn" onclick="selectCategory('refeicoes')">🍱 Ver Refeições</button>
+                    <button class="option-btn" onclick="selectCategory('bebidas')">🥤 Ver Bebidas</button>
+                    <button class="option-btn" onclick="viewCart()">🛒 Ver Carrinho (${cart.length})</button>
+                    <button class="option-btn" onclick="openWhatsAppDirect()">💬 Falar com Atendente</button>
+                </div>`;
+                addMessage(message);
+            }, 1000);
+        }
+
+        function addToCart(item, quantity) {
+            const price = item.selectedPrice || item.price;
+            const displayName = item.displayName || item.name;
+            
+            cart.push({ 
+                name: displayName, 
+                price: price,
+                quantity: quantity,
+                total: price * quantity
+            });
+            
+            showTyping();
+            setTimeout(() => {
+                hideTyping();
+                const message = `✅ ${quantity}x ${displayName} adicionado ao carrinho!<br><br>
+                    <div class="options-container">
+                        <button class="option-btn" onclick="backToCategory()">➕ Continuar Comprando</button>
+                        <button class="option-btn" onclick="viewCart()">🛒 Ver Carrinho (${cart.length})</button>
+                        <button class="option-btn" onclick="finishOrder()">✅ Finalizar Pedido</button>
+                        <button class="option-btn" onclick="backToMainMenu()">🏠 Voltar ao Menu Principal</button>
+                    </div>`;
+                addMessage(message);
+                collectingData = false;
+            }, 1000);
+        }
+
+        function calculateCartTotal() {
+            return cart.reduce((total, item) => total + item.total, 0);
+        }
+
+        function viewCart() {
+            addMessage('Ver carrinho', true);
+            showTyping();
+            setTimeout(() => {
+                hideTyping();
+                if (cart.length === 0) {
+                    addMessage('<div class="empty-cart-message">🛒 Seu carrinho está vazio</div><br><div class="options-container"><button class="option-btn" onclick="backToMainMenu()">↩️ Voltar ao Menu</button></div>');
+                    return;
+                }
+
+                let cartMessage = '<strong>🛒 Seu Carrinho</strong><br><br>';
+                
+                cart.forEach((item, index) => {
+                    cartMessage += `
+                    <div class="cart-item">
+                        <div class="cart-item-info">
+                            <strong>${item.quantity}x ${item.name}</strong><br>
+                            <small>R$ ${item.price.toFixed(2)} cada = R$ ${item.total.toFixed(2)}</small>
+                        </div>
+                        <div class="cart-item-actions">
+                            <button class="cart-action-btn" onclick="editItem(${index})">✏️</button>
+                            <button class="cart-action-btn remove" onclick="removeItem(${index})">🗑️</button>
+                        </div>
+                    </div>`;
+                });
+
+                const total = calculateCartTotal();
+                cartMessage += `<div class="total-price">💰 Total: R$ ${total.toFixed(2)}</div>`;
+                cartMessage += `<div class="options-container">
+                    <button class="option-btn" onclick="continueShopping()">🛍️ Continuar Comprando</button>
+                    <button class="option-btn" onclick="clearCart()">🗑️ Limpar Carrinho</button>
+                    <button class="option-btn" onclick="finishOrder()">✅ Finalizar Pedido</button>
+                </div>`;
+
+                addMessage(cartMessage);
+            }, 1000);
+        }
+
+        function continueShopping() {
+            addMessage('Continuar comprando', true);
+            backToMainMenu();
+        }
+
+        function clearCart() {
+            cart = [];
+            addMessage('Carrinho limpo', true);
+            showTyping();
+            setTimeout(() => {
+                hideTyping();
+                addMessage('Seu carrinho foi esvaziado. O que você gostaria de pedir?<div class="options-container"><button class="option-btn" onclick="backToMainMenu()">↩️ Voltar ao Menu</button></div>');
+            }, 1000);
+        }
+
+        function removeItem(index) {
+            const removedItem = cart[index];
+            cart.splice(index, 1);
+            addMessage(`Remover ${removedItem.name}`, true);
+            showTyping();
+            setTimeout(() => {
+                hideTyping();
+                addMessage(`✅ ${removedItem.name} foi removido do carrinho.`);
+                viewCart();
+            }, 1000);
+        }
+
+        function editItem(index) {
+            const item = cart[index];
+            addMessage(`Editar ${item.name}`, true);
+            showTyping();
+            setTimeout(() => {
+                hideTyping();
+                const message = `Editando: <strong>${item.quantity}x ${item.name}</strong><br>Preço unitário: R$ ${item.price.toFixed(2)}<br><br>Qual a nova quantidade?<br>
+                    <div class="options-container">
+                        <button class="option-btn" onclick="setNewQuantity(${index}, 1)">1</button>
+                        <button class="option-btn" onclick="setNewQuantity(${index}, 2)">2</button>
+                        <button class="option-btn" onclick="setNewQuantity(${index}, 3)">3</button>
+                        <button class="option-btn" onclick="setNewQuantity(${index}, 4)">4</button>
+                        <button class="option-btn" onclick="setNewQuantity(${index}, 5)">5</button>
+                        <button class="option-btn" onclick="customEditQuantity(${index})">Outra quantidade</button>
+                        <button class="option-btn" onclick="viewCart()">↩️ Voltar ao Carrinho</button>
+                    </div>`;
+                addMessage(message);
+            }, 1000);
+        }
+
+        function setNewQuantity(index, quantity) {
+            if (quantity === 0) {
+                removeItem(index);
+            } else {
+                cart[index].quantity = quantity;
+                cart[index].total = cart[index].price * quantity;
+                addMessage(`Quantidade atualizada para ${quantity}`, true);
+                showTyping();
+                setTimeout(() => {
+                    hideTyping();
+                    addMessage(`✅ Quantidade atualizada para ${quantity}x ${cart[index].name}`);
+                    viewCart();
+                }, 1000);
+            }
+        }
+
+        function customEditQuantity(index) {
+            tempItem = { index: index };
+            addMessage('Digite a nova quantidade:', true);
+            currentDataStep = 'edit_quantity';
+        }
+
+        function openWhatsApp() {
+            const cartText = cart.map((item, index) => 
+                `${index + 1}. ${item.quantity}x ${item.name} - R$ ${item.price.toFixed(2)} cada = R$ ${item.total.toFixed(2)}`
+            ).join('%0A');
+            
+            const total = calculateCartTotal();
+            
+            let message = `*🌟 PEDIDO - PATRICK LANCHES 🌟*%0A%0A*📋 ITENS DO PEDIDO:*%0A${cartText}%0A%0A*💰 VALOR TOTAL: R$ ${total.toFixed(2)}*%0A%0A*👤 DADOS DO CLIENTE:*%0ANome: ${customerData.name}%0ATelefone: ${customerData.phone}%0AEndereço: ${customerData.address}%0APonto de Referência: ${customerData.reference}%0A`;
+            
+            if (customerData.observations && customerData.observations !== 'Nenhuma') {
+                message += `%0A*📝 OBSERVAÇÕES:*%0A${customerData.observations}`;
+            }
+            
+            window.open(`https://wa.me/5592993232190?text=${message}`, '_blank');
+        }
+
+        function openWhatsAppDirect() {
+            window.open('https://wa.me/5592993232190?text=Olá! Gostaria de falar com um atendente! 🌟', '_blank');
+        }
+
+        function sendMessage() {
+            const input = document.getElementById('userInput');
+            const message = input.value.trim();
+            if (message === '') return;
+            addMessage(message, true);
+            input.value = '';
+            showTyping();
+            setTimeout(() => {
+                hideTyping();
+                processUserMessage(message);
+            }, 1000);
+        }
+
+        function processUserMessage(message) {
+            const lowerMessage = message.toLowerCase();
+            if (collectingData) {
+                handleOrderFlow(message);
+                return;
+            }
+            if (lowerMessage.includes('pizza')) {
+                selectCategory('pizzas');
+            } else if (lowerMessage.includes('sanduiche') || lowerMessage.includes('lanche') || lowerMessage.includes('hamburguer')) {
+                selectCategory('sanduiches');
+            } else if (lowerMessage.includes('kikao') || lowerMessage.includes('cachorro')) {
+                selectCategory('kikao');
+            } else if (lowerMessage.includes('combo') || lowerMessage.includes('barca')) {
+                selectCategory('combos');
+            } else if (lowerMessage.includes('comida') || lowerMessage.includes('refeicao') || lowerMessage.includes('prato')) {
+                selectCategory('refeicoes');
+            } else if (lowerMessage.includes('bebida') || lowerMessage.includes('refrigerante') || lowerMessage.includes('suco')) {
+                selectCategory('bebidas');
+            } else if (lowerMessage.includes('carrinho') || lowerMessage.includes('pedido')) {
+                viewCart();
+            } else if (lowerMessage.includes('oi') || lowerMessage.includes('ola') || lowerMessage.includes('bom dia') || lowerMessage.includes('boa tarde') || lowerMessage.includes('boa noite')) {
+                addMessage('Olá! Como posso te ajudar hoje? 😊 Escolha uma categoria acima ou me diga o que você procura!');
+            } else if (lowerMessage.includes('obrigad')) {
+                addMessage('Por nada! Estou aqui para ajudar! 🌟 Quer ver mais alguma coisa?');
+            } else {
+                const response = `Entendi! Veja nossas opções:<div class="options-container">
+                    <button class="option-btn" onclick="selectCategory('pizzas')">🍕 Pizzas</button>
+                    <button class="option-btn" onclick="selectCategory('sanduiches')">🍔 Sanduíches</button>
+                    <button class="option-btn" onclick="selectCategory('kikao')">🌭 Kikão</button>
+                    <button class="option-btn" onclick="selectCategory('combos')">🚤 Combos</button>
+                    <button class="option-btn" onclick="viewCart()">🛒 Ver Carrinho (${cart.length})</button>
+                    <button class="option-btn" onclick="openWhatsAppDirect()">💬 Falar com Atendente</button>
+                </div>`;
+                addMessage(response);
+            }
+        }
+
+        function handleOrderFlow(message) {
+            showTyping();
+            setTimeout(() => {
+                hideTyping();
+                switch(currentDataStep) {
+                    case 'custom_quantity': handleCustomQuantity(message); break;
+                    case 'edit_quantity': handleEditQuantity(message); break;
+                    case 'name': handleName(message); break;
+                    case 'phone': handlePhone(message); break;
+                    case 'address': handleAddress(message); break;
+                    case 'reference': handleReference(message); break;
+                    case 'observations': handleObservations(message); break;
+                }
+            }, 1000);
+        }
+
+        function handleCustomQuantity(message) {
+            const qty = parseInt(message);
+            if (!isNaN(qty) && qty > 0) {
+                setQuantity(qty);
+            } else {
+                addMessage('Por favor, digite uma quantidade válida (número maior que 0).');
+            }
+        }
+
+        function handleEditQuantity(message) {
+            const qty = parseInt(message);
+            if (!isNaN(qty) && qty > 0) {
+                setNewQuantity(tempItem.index, qty);
+            } else if (qty === 0) {
+                removeItem(tempItem.index);
+            } else {
+                addMessage('Por favor, digite uma quantidade válida (número maior que 0).');
+            }
+            collectingData = false;
+            currentDataStep = '';
+        }
+
+        function finishOrder() {
+            addMessage('Finalizar pedido', true);
+            showTyping();
+            setTimeout(() => {
+                hideTyping();
+                let cartSummary = '<strong>📋 Resumo do seu pedido:</strong><br><br>';
+                cart.forEach((item, index) => {
+                    cartSummary += `${index + 1}. ${item.quantity}x ${item.name} - R$ ${item.total.toFixed(2)}<br>`;
+                });
+                
+                const total = calculateCartTotal();
+                cartSummary += `<br><div class="total-price">💰 Valor Total: R$ ${total.toFixed(2)}</div>`;
+                cartSummary += '<br>Agora preciso de algumas informações para entregar seu pedido! 😊<br><br><strong>Qual é o seu nome?</strong>';
+                addMessage(cartSummary);
+                currentDataStep = 'name';
+                collectingData = true;
+            }, 1000);
+        }
+
+        function handleName(message) {
+            customerData.name = message;
+            addMessage(`Prazer, ${message}! 😊<br><br>Agora me diga: <strong>Qual é o seu telefone?</strong><br>(Com DDD)`);
+            currentDataStep = 'phone';
+        }
+
+        function handlePhone(message) {
+            customerData.phone = message;
+            addMessage('Perfeito! 📱<br><br>Agora preciso do <strong>endereço completo para entrega:</strong><br>(Rua, número, bairro)');
+            currentDataStep = 'address';
+        }
+
+        function handleAddress(message) {
+            customerData.address = message;
+            addMessage('Ótimo! 📍<br><br>Para facilitar a entrega, pode me dar um <strong>ponto de referência?</strong><br>(Ex: próximo ao mercado, em frente à praça, etc.)');
+            currentDataStep = 'reference';
+        }
+
+        function handleReference(message) {
+            customerData.reference = message;
+            const msg = `Perfeito! Quase lá... 🎉<br><br>Tem alguma <strong>observação sobre o pedido?</strong><br>(Retirar ingredientes, trocar algo, etc.)<div class="options-container"><button class="option-btn" onclick="skipObservations()">⏭️ Não, prosseguir</button></div>`;
+            addMessage(msg);
+            currentDataStep = 'observations';
+        }
+
+        function skipObservations() {
+            addMessage('Prosseguir sem observações', true);
+            customerData.observations = 'Nenhuma';
+            showFinalSummary();
+        }
+
+        function handleObservations(message) {
+            customerData.observations = message;
+            showFinalSummary();
+        }
+
+        function showFinalSummary() {
+            showTyping();
+            setTimeout(() => {
+                hideTyping();
+                let summary = '<strong>🎊 Pedido Confirmado!</strong><br><br><strong>📋 Seu Pedido:</strong><br>';
+                cart.forEach((item, index) => {
+                    summary += `${index + 1}. ${item.quantity}x ${item.name} - R$ ${item.total.toFixed(2)}<br>`;
+                });
+                
+                const total = calculateCartTotal();
+                summary += `<br><div class="total-price">💰 Valor Total: R$ ${total.toFixed(2)}</div>`;
+                
+                summary += '<br><strong>👤 Dados:</strong><br>';
+                summary += `Nome: ${customerData.name}<br>Telefone: ${customerData.phone}<br>Endereço: ${customerData.address}<br>Referência: ${customerData.reference}<br>`;
+                if (customerData.observations && customerData.observations !== 'Nenhuma') {
+                    summary += `<br><strong>📝 Observações:</strong><br>${customerData.observations}<br>`;
+                }
+                summary += '<br>Clique no botão abaixo para enviar seu pedido pelo WhatsApp! 💚';
+                summary += '<button class="whatsapp-btn-chat" onclick="openWhatsApp()">📱 Enviar Pedido via WhatsApp</button>';
+                summary += `<div class="options-container" style="margin-top: 10px;">
+                    <button class="option-btn" onclick="resetChat()">🔄 Fazer Novo Pedido</button>
+                    <button class="option-btn" onclick="viewCart()">📋 Voltar ao Carrinho</button>
+                </div>`;
+                addMessage(summary);
+                collectingData = false;
+            }, 1500);
+        }
+
+        function resetChat() {
+            cart = [];
+            customerData = { name: '', phone: '', address: '', reference: '', observations: '' };
+            collectingData = false;
+            currentDataStep = '';
+            currentCategory = null;
+            addMessage('Iniciar novo pedido', true);
+            backToMainMenu();
+        }
+
+        function handleKeyPress(event) {
+            if (event.key === 'Enter') {
+                sendMessage();
+            }
+        }
+    </script>
+</body>
+</html>
