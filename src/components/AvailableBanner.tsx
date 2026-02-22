@@ -25,19 +25,20 @@ const links = [
 
 export const AvailableBanner = () => {
   return (
-    <div className="w-full bg-muted border-b border-primary/20 text-card-foreground py-2 px-4 fixed top-0 left-0 right-0 z-[60]">
-      <div className="container mx-auto flex flex-wrap items-center justify-center gap-4 text-sm font-mono">
-        <span className="flex items-center gap-2 font-semibold">
-          <span className="relative flex h-2.5 w-2.5">
+    <div className="w-full bg-muted border-b border-primary/20 text-card-foreground py-1.5 px-3 fixed top-0 left-0 right-0 z-[60]">
+      <div className="container mx-auto flex items-center justify-center gap-2 sm:gap-4 text-xs sm:text-sm font-mono">
+        <span className="flex items-center gap-1.5 font-semibold whitespace-nowrap">
+          <span className="relative flex h-2 w-2">
             <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75" />
-            <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-green-400" />
+            <span className="relative inline-flex rounded-full h-2 w-2 bg-green-400" />
           </span>
-          Disponível para oportunidades
+          <span className="hidden sm:inline">Disponível para oportunidades</span>
+          <span className="sm:hidden">Disponível</span>
         </span>
 
-        <span className="hidden sm:inline text-muted-foreground/50">|</span>
+        <span className="text-muted-foreground/50">|</span>
 
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2 sm:gap-3">
           {links.map((link) => (
             <a
               key={link.label}
@@ -51,7 +52,7 @@ export const AvailableBanner = () => {
               className="flex items-center gap-1.5 hover:opacity-80 transition-opacity cursor-pointer"
               aria-label={link.label}
             >
-              <link.icon className="w-4 h-4" />
+              <link.icon className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
               <span className="hidden md:inline">{link.label}</span>
             </a>
           ))}
