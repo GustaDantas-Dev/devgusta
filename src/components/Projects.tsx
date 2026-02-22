@@ -23,7 +23,7 @@ const projects = [
     title: "Sites Profissionais",
     description: "TH Rastreamento, LETRAN, barbearia. Portfólios para filmmaker, advogado e arquiteto.",
     tech: ["HTML/CSS", "JavaScript", "Responsive", "WhatsApp API"],
-    link: "https://wa.me/5592993232190?text=Olá! Tenho interesse em sites profissionais.",
+    link: "/exemplos/th-rastreadores.html",
   },
   {
     icon: Bot,
