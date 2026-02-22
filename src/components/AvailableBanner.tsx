@@ -44,7 +44,11 @@ export const AvailableBanner = () => {
               href={link.href}
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center gap-1.5 hover:opacity-80 transition-opacity"
+              onClick={(e) => {
+                e.preventDefault();
+                window.open(link.href, "_blank", "noopener,noreferrer");
+              }}
+              className="flex items-center gap-1.5 hover:opacity-80 transition-opacity cursor-pointer"
               aria-label={link.label}
             >
               <link.icon className="w-4 h-4" />
