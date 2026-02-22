@@ -37,7 +37,7 @@ const projects = [
     title: "Sistema Prisional",
     description: "Organização Kanban com módulos: cadastro, visitas, disciplina, movimentação e relatórios.",
     tech: ["Análise", "Documentação", "DER/MER", "BPMN"],
-    link: "https://wa.me/5592993232190?text=Olá! Tenho interesse no projeto Sistema Prisional.",
+    link: "/demo/sistema-prisional",
   },
   {
     icon: FileText,
