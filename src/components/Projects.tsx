@@ -30,7 +30,7 @@ const projects = [
     title: "Cardápios + Chatbot",
     description: "Cardápios digitais com chatbot para registrar pedidos automaticamente.",
     tech: ["Chatbot", "JavaScript", "Automation"],
-    link: "https://wa.me/5592993232190?text=Olá! Tenho interesse no projeto Cardápios Digitais.",
+    link: "/exemplos/cardapio-chatbot.html",
   },
   {
     icon: ClipboardList,
