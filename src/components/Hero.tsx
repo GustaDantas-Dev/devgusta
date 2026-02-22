@@ -69,9 +69,10 @@ export const Hero = () => {
             </div>
 
             <p className="text-muted-foreground mb-4 max-w-xl font-mono text-sm leading-relaxed">
-              Combino habilidades técnicas avançadas com visão criativa para criar
-              experiências digitais inovadoras. Código limpo, automação inteligente
-              e soluções que funcionam.
+              Desenvolvedor Full Stack focado em sistemas administrativos, automação
+              e soluções IoT para pequenas e médias empresas. Experiência na criação
+              de plataformas web, chatbots e integrações que reduzem processos manuais
+              e aumentam eficiência operacional.
             </p>
 
             {/* Status badges */}
