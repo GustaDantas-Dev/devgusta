@@ -25,7 +25,7 @@ const links = [
 
 export const AvailableBanner = () => {
   return (
-    <div className="w-full bg-primary text-primary-foreground py-2 px-4 relative z-[60]">
+    <div className="w-full bg-muted border-b border-primary/20 text-card-foreground py-2 px-4 fixed top-0 left-0 right-0 z-[60]">
       <div className="container mx-auto flex flex-wrap items-center justify-center gap-4 text-sm font-mono">
         <span className="flex items-center gap-2 font-semibold">
           <span className="relative flex h-2.5 w-2.5">
@@ -35,7 +35,7 @@ export const AvailableBanner = () => {
           Disponível para oportunidades
         </span>
 
-        <span className="hidden sm:inline text-primary-foreground/50">|</span>
+        <span className="hidden sm:inline text-muted-foreground/50">|</span>
 
         <div className="flex items-center gap-3">
           {links.map((link) => (
