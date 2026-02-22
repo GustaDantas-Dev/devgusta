@@ -1,0 +1,1930 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TH Rastreadores - Sistema Completo de Rastreamento</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <style>
+        :root {
+            --gold: #D4AF37;
+            --dark-gold: #B8860B;
+            --black: #121212;
+            --dark-gray: #1E1E1E;
+            --light-gray: #F5F5F5;
+            --white: #FFFFFF;
+            --success: #4CAF50;
+            --warning: #FF9800;
+            --danger: #F44336;
+            --info: #2196F3;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: var(--black);
+            color: var(--white);
+            line-height: 1.6;
+        }
+        
+        .container {
+            width: 90%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        /* Header */
+        header {
+            background-color: var(--black);
+            padding: 20px 0;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+        }
+        
+        .header-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+        }
+        
+        .logo h1 {
+            color: var(--gold);
+            font-size: 1.8rem;
+            margin-left: 10px;
+        }
+        
+        .logo-icon {
+            color: var(--gold);
+            font-size: 2rem;
+        }
+        
+        nav ul {
+            display: flex;
+            list-style: none;
+        }
+        
+        nav ul li {
+            margin-left: 30px;
+        }
+        
+        nav ul li a {
+            color: var(--white);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+        
+        nav ul li a:hover {
+            color: var(--gold);
+        }
+        
+        .mobile-menu {
+            display: none;
+            font-size: 1.5rem;
+            color: var(--gold);
+            cursor: pointer;
+        }
+        
+        /* Hero Section */
+        .hero {
+            background: linear-gradient(rgba(18, 18, 18, 0.8), rgba(18, 18, 18, 0.8)), url('https://images.unsplash.com/photo-1587617425953-9075d28b8c46?ixlib=rb-4.0.3&auto=format&fit=crop&w=1350&q=80');
+            background-size: cover;
+            background-position: center;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            text-align: center;
+            padding-top: 80px;
+        }
+        
+        .hero-content {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .hero h2 {
+            font-size: 3.5rem;
+            margin-bottom: 20px;
+            color: var(--white);
+        }
+        
+        .hero h2 span {
+            color: var(--gold);
+        }
+        
+        .hero p {
+            font-size: 1.2rem;
+            margin-bottom: 30px;
+            color: var(--light-gray);
+        }
+        
+        .btn {
+            display: inline-block;
+            background-color: var(--gold);
+            color: var(--black);
+            padding: 12px 30px;
+            border-radius: 5px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s;
+            border: none;
+            cursor: pointer;
+        }
+        
+        .btn:hover {
+            background-color: var(--dark-gold);
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(212, 175, 55, 0.3);
+        }
+        
+        .btn-outline {
+            background-color: transparent;
+            border: 2px solid var(--gold);
+            color: var(--gold);
+        }
+        
+        .btn-outline:hover {
+            background-color: var(--gold);
+            color: var(--black);
+        }
+        
+        /* Dashboard Section */
+        .dashboard {
+            padding: 100px 0;
+            background-color: var(--dark-gray);
+        }
+        
+        .section-title {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+        
+        .section-title h2 {
+            font-size: 2.5rem;
+            color: var(--gold);
+            margin-bottom: 15px;
+        }
+        
+        .section-title p {
+            color: var(--light-gray);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        .dashboard-container {
+            display: grid;
+            grid-template-columns: 1fr 350px;
+            gap: 30px;
+        }
+        
+        .map-container {
+            background-color: var(--black);
+            border-radius: 10px;
+            overflow: hidden;
+            height: 600px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+        
+        #map {
+            height: 100%;
+            width: 100%;
+        }
+        
+        .dashboard-sidebar {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        
+        .vehicle-status {
+            background-color: var(--black);
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+        
+        .vehicle-status h3 {
+            color: var(--gold);
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .vehicle-list {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        
+        .vehicle-card {
+            background-color: var(--dark-gray);
+            border-radius: 8px;
+            padding: 15px;
+            border-left: 4px solid var(--gold);
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .vehicle-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+        }
+        
+        .vehicle-card.active {
+            border-left: 4px solid var(--success);
+        }
+        
+        .vehicle-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        
+        .vehicle-name {
+            font-weight: 600;
+        }
+        
+        .vehicle-status-badge {
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+        
+        .status-moving {
+            background-color: var(--success);
+            color: white;
+        }
+        
+        .status-stopped {
+            background-color: var(--warning);
+            color: white;
+        }
+        
+        .status-offline {
+            background-color: var(--danger);
+            color: white;
+        }
+        
+        .vehicle-details {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            font-size: 0.9rem;
+            color: var(--light-gray);
+        }
+        
+        .alert-panel {
+            background-color: var(--black);
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+        
+        .alert-panel h3 {
+            color: var(--gold);
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .alert-list {
+            max-height: 200px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        
+        .alert-item {
+            background-color: var(--dark-gray);
+            border-radius: 8px;
+            padding: 10px 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .alert-item:hover {
+            background-color: rgba(212, 175, 55, 0.1);
+        }
+        
+        .alert-icon {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+        
+        .alert-speed {
+            background-color: var(--danger);
+        }
+        
+        .alert-geofence {
+            background-color: var(--warning);
+        }
+        
+        .alert-ignition {
+            background-color: var(--success);
+        }
+        
+        .alert-panic {
+            background-color: var(--danger);
+            animation: pulse 1.5s infinite;
+        }
+        
+        .alert-battery {
+            background-color: var(--warning);
+        }
+        
+        .alert-content {
+            flex: 1;
+        }
+        
+        .alert-time {
+            font-size: 0.8rem;
+            color: var(--light-gray);
+        }
+        
+        .controls-panel {
+            background-color: var(--black);
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+        
+        .controls-panel h3 {
+            color: var(--gold);
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .controls-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+        
+        .control-btn {
+            background-color: var(--dark-gray);
+            border: none;
+            border-radius: 8px;
+            padding: 12px;
+            color: var(--white);
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .control-btn:hover {
+            background-color: var(--gold);
+            color: var(--black);
+        }
+        
+        .control-btn i {
+            font-size: 1.5rem;
+        }
+        
+        .demo-controls {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        
+        /* Reports Section */
+        .reports {
+            padding: 100px 0;
+            background-color: var(--black);
+        }
+        
+        .reports-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+        }
+        
+        .report-card {
+            background-color: var(--dark-gray);
+            border-radius: 10px;
+            padding: 25px;
+            text-align: center;
+            transition: transform 0.3s;
+            border: 1px solid rgba(212, 175, 55, 0.2);
+        }
+        
+        .report-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        }
+        
+        .report-icon {
+            font-size: 3rem;
+            color: var(--gold);
+            margin-bottom: 20px;
+        }
+        
+        .report-card h3 {
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+        }
+        
+        .report-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--gold);
+            margin: 15px 0;
+        }
+        
+        .report-details {
+            font-size: 0.9rem;
+            color: var(--light-gray);
+        }
+        
+        /* Features Section */
+        .features {
+            padding: 100px 0;
+            background-color: var(--dark-gray);
+        }
+        
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+        }
+        
+        .feature-card {
+            background-color: var(--black);
+            padding: 30px;
+            border-radius: 10px;
+            text-align: center;
+            transition: transform 0.3s;
+            border: 1px solid rgba(212, 175, 55, 0.2);
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        }
+        
+        .feature-icon {
+            font-size: 3rem;
+            color: var(--gold);
+            margin-bottom: 20px;
+        }
+        
+        .feature-card h3 {
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+        }
+        
+        /* Services Section */
+        .services {
+            padding: 100px 0;
+            background-color: var(--black);
+        }
+        
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+        }
+        
+        .service-card {
+            background-color: var(--dark-gray);
+            border-radius: 10px;
+            overflow: hidden;
+            transition: transform 0.3s;
+        }
+        
+        .service-card:hover {
+            transform: translateY(-10px);
+        }
+        
+        .service-img {
+            height: 200px;
+            background-color: var(--gold);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .service-content {
+            padding: 25px;
+        }
+        
+        .service-content h3 {
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+            color: var(--gold);
+        }
+        
+        /* Testimonials */
+        .testimonials {
+            padding: 100px 0;
+            background-color: var(--dark-gray);
+        }
+        
+        .testimonials-slider {
+            max-width: 800px;
+            margin: 0 auto;
+            position: relative;
+        }
+        
+        .testimonial {
+            background-color: var(--black);
+            padding: 30px;
+            border-radius: 10px;
+            text-align: center;
+            margin: 0 20px;
+            border: 1px solid rgba(212, 175, 55, 0.2);
+        }
+        
+        .testimonial-text {
+            font-style: italic;
+            margin-bottom: 20px;
+        }
+        
+        .testimonial-author {
+            color: var(--gold);
+            font-weight: 600;
+        }
+        
+        /* Contact Section */
+        .contact {
+            padding: 100px 0;
+            background-color: var(--black);
+        }
+        
+        .contact-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 50px;
+        }
+        
+        .contact-info h3 {
+            font-size: 1.8rem;
+            margin-bottom: 20px;
+            color: var(--gold);
+        }
+        
+        .contact-details {
+            margin-bottom: 30px;
+        }
+        
+        .contact-detail {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .contact-detail i {
+            color: var(--gold);
+            margin-right: 15px;
+            font-size: 1.2rem;
+        }
+        
+        .contact-form input,
+        .contact-form textarea {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 20px;
+            background-color: var(--dark-gray);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 5px;
+            color: var(--white);
+        }
+        
+        .contact-form textarea {
+            height: 150px;
+            resize: vertical;
+        }
+        
+        /* Footer */
+        footer {
+            background-color: var(--dark-gray);
+            padding: 50px 0 20px;
+        }
+        
+        .footer-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+        
+        .footer-col h4 {
+            color: var(--gold);
+            margin-bottom: 20px;
+            font-size: 1.2rem;
+        }
+        
+        .footer-col ul {
+            list-style: none;
+        }
+        
+        .footer-col ul li {
+            margin-bottom: 10px;
+        }
+        
+        .footer-col ul li a {
+            color: var(--light-gray);
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+        
+        .footer-col ul li a:hover {
+            color: var(--gold);
+        }
+        
+        .social-links {
+            display: flex;
+            gap: 15px;
+        }
+        
+        .social-links a {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            background-color: var(--black);
+            border-radius: 50%;
+            color: var(--gold);
+            transition: all 0.3s;
+        }
+        
+        .social-links a:hover {
+            background-color: var(--gold);
+            color: var(--black);
+            transform: translateY(-3px);
+        }
+        
+        .copyright {
+            text-align: center;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            color: var(--light-gray);
+            font-size: 0.9rem;
+        }
+        
+        /* AI Assistant */
+        .ai-assistant {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            z-index: 1000;
+        }
+        
+        .ai-toggle {
+            width: 60px;
+            height: 60px;
+            background-color: var(--gold);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            transition: all 0.3s;
+        }
+        
+        .ai-toggle:hover {
+            transform: scale(1.1);
+        }
+        
+        .ai-toggle i {
+            font-size: 1.5rem;
+            color: var(--black);
+        }
+        
+        .ai-chat {
+            position: absolute;
+            bottom: 80px;
+            right: 0;
+            width: 350px;
+            height: 450px;
+            background-color: var(--dark-gray);
+            border-radius: 10px;
+            box-shadow: 0 5px 25px rgba(0, 0, 0, 0.3);
+            display: none;
+            flex-direction: column;
+            border: 1px solid rgba(212, 175, 55, 0.3);
+        }
+        
+        .ai-chat.active {
+            display: flex;
+        }
+        
+        .ai-header {
+            background-color: var(--gold);
+            color: var(--black);
+            padding: 15px;
+            border-radius: 10px 10px 0 0;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        .ai-header h3 {
+            font-size: 1.2rem;
+        }
+        
+        .ai-close {
+            cursor: pointer;
+            font-size: 1.2rem;
+        }
+        
+        .ai-messages {
+            flex: 1;
+            padding: 15px;
+            overflow-y: auto;
+        }
+        
+        .message {
+            margin-bottom: 15px;
+            padding: 10px 15px;
+            border-radius: 10px;
+            max-width: 80%;
+        }
+        
+        .ai-message {
+            background-color: rgba(212, 175, 55, 0.2);
+            align-self: flex-start;
+        }
+        
+        .user-message {
+            background-color: var(--black);
+            align-self: flex-end;
+            margin-left: auto;
+        }
+        
+        .ai-input {
+            display: flex;
+            padding: 15px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .ai-input input {
+            flex: 1;
+            padding: 10px;
+            background-color: var(--black);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 5px 0 0 5px;
+            color: var(--white);
+        }
+        
+        .ai-input button {
+            background-color: var(--gold);
+            color: var(--black);
+            border: none;
+            padding: 0 15px;
+            border-radius: 0 5px 5px 0;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        
+        .ai-input button:hover {
+            background-color: var(--dark-gold);
+        }
+        
+        /* Animations */
+        @keyframes pulse {
+            0% {
+                box-shadow: 0 0 0 0 rgba(244, 67, 54, 0.7);
+            }
+            70% {
+                box-shadow: 0 0 0 10px rgba(244, 67, 54, 0);
+            }
+            100% {
+                box-shadow: 0 0 0 0 rgba(244, 67, 54, 0);
+            }
+        }
+        
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .dashboard-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .dashboard-sidebar {
+                grid-template-columns: 1fr 1fr;
+                display: grid;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            nav ul {
+                display: none;
+                position: absolute;
+                top: 80px;
+                left: 0;
+                width: 100%;
+                background-color: var(--black);
+                flex-direction: column;
+                padding: 20px;
+                box-shadow: 0 5px 10px rgba(0, 0, 0, 0.3);
+            }
+            
+            nav ul.active {
+                display: flex;
+            }
+            
+            nav ul li {
+                margin: 10px 0;
+            }
+            
+            .mobile-menu {
+                display: block;
+            }
+            
+            .hero h2 {
+                font-size: 2.5rem;
+            }
+            
+            .dashboard-sidebar {
+                grid-template-columns: 1fr;
+            }
+            
+            .ai-chat {
+                width: 300px;
+                height: 400px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .hero h2 {
+                font-size: 2rem;
+            }
+            
+            .section-title h2 {
+                font-size: 2rem;
+            }
+            
+            .ai-chat {
+                width: 280px;
+                right: -20px;
+            }
+            
+            .controls-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="container header-container">
+            <div class="logo">
+                <i class="fas fa-map-marker-alt logo-icon"></i>
+                <h1>TH Rastreadores</h1>
+            </div>
+            <nav>
+                <div class="mobile-menu">
+                    <i class="fas fa-bars"></i>
+                </div>
+                <ul>
+                    <li><a href="#home">Início</a></li>
+                    <li><a href="#dashboard">Dashboard</a></li>
+                    <li><a href="#reports">Relatórios</a></li>
+                    <li><a href="#features">Recursos</a></li>
+                    <li><a href="#services">Serviços</a></li>
+                    <li><a href="#contact">Contato</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero" id="home">
+        <div class="container hero-content">
+            <h2>Sistema Completo de <span>Rastreamento</span> em Manaus</h2>
+            <p>Proteja seus veículos e ativos com a tecnologia de rastreamento mais avançada da região amazônica. Monitoramento 24/7 com precisão e confiabilidade.</p>
+            <a href="#dashboard" class="btn">Acessar Dashboard</a>
+        </div>
+    </section>
+
+    <!-- Dashboard Section -->
+    <section class="dashboard" id="dashboard">
+        <div class="container">
+            <div class="section-title">
+                <h2>Dashboard de Rastreamento</h2>
+                <p>Monitoramento em tempo real dos seus veículos em Manaus e região</p>
+            </div>
+            
+            <div class="dashboard-container">
+                <div class="map-container">
+                    <div id="map"></div>
+                </div>
+                
+                <div class="dashboard-sidebar">
+                    <div class="vehicle-status">
+                        <h3><i class="fas fa-car"></i> Status dos Veículos</h3>
+                        <div class="vehicle-list">
+                            <div class="vehicle-card active" data-vehicle="1">
+                                <div class="vehicle-header">
+                                    <div class="vehicle-name">Frota Manaus 01</div>
+                                    <div class="vehicle-status-badge status-moving">Em Movimento</div>
+                                </div>
+                                <div class="vehicle-details">
+                                    <div>Velocidade: <span id="speed1">45 km/h</span></div>
+                                    <div>Última atualização: <span id="lastUpdate1">2 min atrás</span></div>
+                                </div>
+                            </div>
+                            <div class="vehicle-card" data-vehicle="2">
+                                <div class="vehicle-header">
+                                    <div class="vehicle-name">Frota Manaus 02</div>
+                                    <div class="vehicle-status-badge status-stopped">Parado</div>
+                                </div>
+                                <div class="vehicle-details">
+                                    <div>Velocidade: <span id="speed2">0 km/h</span></div>
+                                    <div>Última atualização: <span id="lastUpdate2">5 min atrás</span></div>
+                                </div>
+                            </div>
+                            <div class="vehicle-card" data-vehicle="3">
+                                <div class="vehicle-header">
+                                    <div class="vehicle-name">Frota Manaus 03</div>
+                                    <div class="vehicle-status-badge status-offline">Offline</div>
+                                </div>
+                                <div class="vehicle-details">
+                                    <div>Velocidade: <span id="speed3">-- km/h</span></div>
+                                    <div>Última atualização: <span id="lastUpdate3">1 hora atrás</span></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="alert-panel">
+                        <h3><i class="fas fa-bell"></i> Alertas Recentes</h3>
+                        <div class="alert-list" id="alertList">
+                            <div class="alert-item" data-alert="panic">
+                                <div class="alert-icon alert-panic">
+                                    <i class="fas fa-exclamation-triangle"></i>
+                                </div>
+                                <div class="alert-content">
+                                    <div>Botão de pânico ativado!</div>
+                                    <div class="alert-time">Frota Manaus 01 • 10:25</div>
+                                </div>
+                            </div>
+                            <div class="alert-item" data-alert="speed">
+                                <div class="alert-icon alert-speed">
+                                    <i class="fas fa-tachometer-alt"></i>
+                                </div>
+                                <div class="alert-content">
+                                    <div>Excesso de velocidade detectado</div>
+                                    <div class="alert-time">Frota Manaus 01 • 10:15</div>
+                                </div>
+                            </div>
+                            <div class="alert-item" data-alert="geofence">
+                                <div class="alert-icon alert-geofence">
+                                    <i class="fas fa-map-marker-alt"></i>
+                                </div>
+                                <div class="alert-content">
+                                    <div>Veículo saiu da área definida</div>
+                                    <div class="alert-time">Frota Manaus 02 • 09:42</div>
+                                </div>
+                            </div>
+                            <div class="alert-item" data-alert="ignition">
+                                <div class="alert-icon alert-ignition">
+                                    <i class="fas fa-key"></i>
+                                </div>
+                                <div class="alert-content">
+                                    <div>Ignição ligada fora do horário</div>
+                                    <div class="alert-time">Frota Manaus 01 • 08:15</div>
+                                </div>
+                            </div>
+                            <div class="alert-item" data-alert="battery">
+                                <div class="alert-icon alert-battery">
+                                    <i class="fas fa-battery-quarter"></i>
+                                </div>
+                                <div class="alert-content">
+                                    <div>Bateria do rastreador fraca</div>
+                                    <div class="alert-time">Frota Manaus 03 • 07:30</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="controls-panel">
+                        <h3><i class="fas fa-sliders-h"></i> Controles</h3>
+                        <div class="controls-grid">
+                            <button class="control-btn" id="geofenceBtn">
+                                <i class="fas fa-draw-polygon"></i>
+                                <span>Cerca Eletrônica</span>
+                            </button>
+                            <button class="control-btn" id="panicBtn">
+                                <i class="fas fa-exclamation-triangle"></i>
+                                <span>Botão de Pânico</span>
+                            </button>
+                            <button class="control-btn" id="reportBtn">
+                                <i class="fas fa-chart-bar"></i>
+                                <span>Relatórios</span>
+                            </button>
+                            <button class="control-btn" id="historyBtn">
+                                <i class="fas fa-route"></i>
+                                <span>Histórico</span>
+                            </button>
+                        </div>
+                        <div class="demo-controls">
+                            <button class="btn btn-outline" id="demoBtn">
+                                <i class="fas fa-play"></i> Iniciar Demo
+                            </button>
+                            <button class="btn btn-outline" id="resetDemo">
+                                <i class="fas fa-redo"></i> Resetar
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Reports Section -->
+    <section class="reports" id="reports">
+        <div class="container">
+            <div class="section-title">
+                <h2>Relatórios e Estatísticas</h2>
+                <p>Análise detalhada do desempenho e utilização dos veículos</p>
+            </div>
+            
+            <div class="reports-grid">
+                <div class="report-card">
+                    <i class="fas fa-road report-icon"></i>
+                    <h3>Quilometragem</h3>
+                    <div class="report-value">248,7 km</div>
+                    <div class="report-details">Distância percorrida nos últimos 7 dias</div>
+                </div>
+                <div class="report-card">
+                    <i class="fas fa-tachometer-alt report-icon"></i>
+                    <h3>Velocidade Média</h3>
+                    <div class="report-value">42 km/h</div>
+                    <div class="report-details">Velocidade média na última semana</div>
+                </div>
+                <div class="report-card">
+                    <i class="fas fa-clock report-icon"></i>
+                    <h3>Tempo de Motor</h3>
+                    <div class="report-value">18h 32min</div>
+                    <div class="report-details">Tempo total com motor ligado</div>
+                </div>
+                <div class="report-card">
+                    <i class="fas fa-gas-pump report-icon"></i>
+                    <h3>Consumo Estimado</h3>
+                    <div class="report-value">87 L</div>
+                    <div class="report-details">Consumo de combustível (base histórico)</div>
+                </div>
+                <div class="report-card">
+                    <i class="fas fa-map-marker-alt report-icon"></i>
+                    <h3>Paradas</h3>
+                    <div class="report-value">14</div>
+                    <div class="report-details">Paradas registradas no último mês</div>
+                </div>
+                <div class="report-card">
+                    <i class="fas fa-exclamation-triangle report-icon"></i>
+                    <h3>Alertas de Velocidade</h3>
+                    <div class="report-value">3</div>
+                    <div class="report-details">Excessos de velocidade esta semana</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="features" id="features">
+        <div class="container">
+            <div class="section-title">
+                <h2>Funcionalidades Avançadas</h2>
+                <p>Tecnologia de ponta para segurança e gestão completa da sua frota</p>
+            </div>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <i class="fas fa-shield-alt feature-icon"></i>
+                    <h3>Segurança Máxima</h3>
+                    <p>Sistema de proteção avançado com bloqueio remoto e notificações instantâneas, mesmo em áreas de baixa cobertura.</p>
+                </div>
+                <div class="feature-card">
+                    <i class="fas fa-satellite-dish feature-icon"></i>
+                    <h3>Monitoramento 24/7</h3>
+                    <p>Acompanhamento em tempo real com central de monitoramento ativa 24 horas por dia, especializada na região Norte.</p>
+                </div>
+                <div class="feature-card">
+                    <i class="fas fa-mobile-alt feature-icon"></i>
+                    <h3>Aplicativo Exclusivo</h3>
+                    <p>Controle total pelo smartphone com interface intuitiva e relatórios detalhados adaptados para frotas da Amazônia.</p>
+                </div>
+                <div class="feature-card">
+                    <i class="fas fa-brain feature-icon"></i>
+                    <h3>Inteligência Artificial</h3>
+                    <p>Detecção de padrões anormais de direção e comportamento suspeito com algoritmos de IA avançados.</p>
+                </div>
+                <div class="feature-card">
+                    <i class="fas fa-chart-line feature-icon"></i>
+                    <h3>Relatórios Personalizados</h3>
+                    <p>Geração de relatórios detalhados com filtros personalizáveis para análise completa do desempenho.</p>
+                </div>
+                <div class="feature-card">
+                    <i class="fas fa-cogs feature-icon"></i>
+                    <h3>Manutenção Preditiva</h3>
+                    <p>Alertas inteligentes para manutenção preventiva baseada em quilometragem e condições de uso.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Services Section -->
+    <section class="services" id="services">
+        <div class="container">
+            <div class="section-title">
+                <h2>Nossos Serviços em Manaus</h2>
+                <p>Soluções personalizadas para diferentes necessidades de rastreamento e segurança na região.</p>
+            </div>
+            <div class="services-grid">
+                <div class="service-card">
+                    <div class="service-img">
+                        <i class="fas fa-car" style="font-size: 4rem; color: var(--black);"></i>
+                    </div>
+                    <div class="service-content">
+                        <h3>Rastreamento Veicular</h3>
+                        <p>Proteção completa para carros, motos, caminhões e frotas empresariais com tecnologia GPS de última geração, otimizada para Manaus.</p>
+                    </div>
+                </div>
+                <div class="service-card">
+                    <div class="service-img">
+                        <i class="fas fa-ship" style="font-size: 4rem; color: var(--black);"></i>
+                    </div>
+                    <div class="service-content">
+                        <h3>Rastreamento de Embarcações</h3>
+                        <p>Monitoramento de barcos e embarcações na região dos rios amazônicos com tecnologia adaptada para ambientes aquáticos.</p>
+                    </div>
+                </div>
+                <div class="service-card">
+                    <div class="service-img">
+                        <i class="fas fa-user-shield" style="font-size: 4rem; color: var(--black);"></i>
+                    </div>
+                    <div class="service-content">
+                        <h3>Rastreamento Pessoal</h3>
+                        <p>Dispositivos discretos para segurança pessoal e familiar com botão de emergência e geofencing, ideal para a realidade local.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonials Section -->
+    <section class="testimonials" id="testimonials">
+        <div class="container">
+            <div class="section-title">
+                <h2>O que nossos clientes em Manaus dizem</h2>
+                <p>Confira a experiência de quem já confia na TH Rastreadores na região Norte.</p>
+            </div>
+            <div class="testimonials-slider">
+                <div class="testimonial">
+                    <p class="testimonial-text">"Após instalar o rastreador da TH Rastreadores na minha frota de Manaus, consegui reduzir custos com combustível em 18% e melhorar a segurança dos meus motoristas. O suporte local é excelente!"</p>
+                    <p class="testimonial-author">- Carlos Silva, Empresário de Transportes</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section class="contact" id="contact">
+        <div class="container">
+            <div class="section-title">
+                <h2>Entre em Contato</h2>
+                <p>Estamos prontos para oferecer a melhor solução para suas necessidades em Manaus.</p>
+            </div>
+            <div class="contact-container">
+                <div class="contact-info">
+                    <h3>Fale Conosco</h3>
+                    <div class="contact-details">
+                        <div class="contact-detail">
+                            <i class="fas fa-map-marker-alt"></i>
+                            <p>Av. Djalma Batista, 500 - Chapada, Manaus - AM</p>
+                        </div>
+                        <div class="contact-detail">
+                            <i class="fas fa-phone"></i>
+                            <p>(92) 3456-7890</p>
+                        </div>
+                        <div class="contact-detail">
+                            <i class="fas fa-envelope"></i>
+                            <p>manaus@thrastreadores.com.br</p>
+                        </div>
+                    </div>
+                    <div class="social-links">
+                        <a href="#"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                        <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                        <a href="#"><i class="fab fa-whatsapp"></i></a>
+                    </div>
+                </div>
+                <div class="contact-form">
+                    <form id="contactForm">
+                        <input type="text" placeholder="Seu nome" required>
+                        <input type="email" placeholder="Seu e-mail" required>
+                        <input type="tel" placeholder="Seu telefone">
+                        <textarea placeholder="Sua mensagem" required></textarea>
+                        <button type="submit" class="btn">Enviar Mensagem</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-container">
+                <div class="footer-col">
+                    <h4>TH Rastreadores</h4>
+                    <p>Soluções inteligentes em rastreamento e segurança para veículos, embarcações e pessoas em Manaus e região amazônica.</p>
+                </div>
+                <div class="footer-col">
+                    <h4>Links Rápidos</h4>
+                    <ul>
+                        <li><a href="#home">Início</a></li>
+                        <li><a href="#dashboard">Dashboard</a></li>
+                        <li><a href="#reports">Relatórios</a></li>
+                        <li><a href="#features">Recursos</a></li>
+                        <li><a href="#services">Serviços</a></li>
+                        <li><a href="#contact">Contato</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h4>Serviços em Manaus</h4>
+                    <ul>
+                        <li><a href="#">Rastreamento Veicular</a></li>
+                        <li><a href="#">Rastreamento de Embarcações</a></li>
+                        <li><a href="#">Rastreamento Pessoal</a></li>
+                        <li><a href="#">Monitoramento 24h</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h4>Contato</h4>
+                    <ul>
+                        <li><i class="fas fa-map-marker-alt"></i> Manaus, AM</li>
+                        <li><i class="fas fa-phone"></i> (92) 3456-7890</li>
+                        <li><i class="fas fa-envelope"></i> manaus@thrastreadores.com.br</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="copyright">
+                <p>&copy; 2023 TH Rastreadores. Todos os direitos reservados. Conformidade com a LGPD.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- AI Assistant -->
+    <div class="ai-assistant">
+        <div class="ai-toggle" id="aiToggle">
+            <i class="fas fa-robot"></i>
+        </div>
+        <div class="ai-chat" id="aiChat">
+            <div class="ai-header">
+                <h3>Assistente TH</h3>
+                <div class="ai-close" id="aiClose">
+                    <i class="fas fa-times"></i>
+                </div>
+            </div>
+            <div class="ai-messages" id="aiMessages">
+                <div class="message ai-message">
+                    Olá! Sou o assistente virtual da TH Rastreadores em Manaus. Como posso ajudá-lo hoje? Posso falar sobre nossos serviços, planos, instalação, suporte técnico e muito mais!
+                </div>
+            </div>
+            <div class="ai-input">
+                <input type="text" id="aiInput" placeholder="Digite sua mensagem...">
+                <button id="aiSend"><i class="fas fa-paper-plane"></i></button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script>
+        // Mobile Menu Toggle
+        document.querySelector('.mobile-menu').addEventListener('click', function() {
+            document.querySelector('nav ul').classList.toggle('active');
+        });
+
+        // AI Assistant Toggle
+        document.getElementById('aiToggle').addEventListener('click', function() {
+            document.getElementById('aiChat').classList.toggle('active');
+        });
+
+        document.getElementById('aiClose').addEventListener('click', function() {
+            document.getElementById('aiChat').classList.remove('active');
+        });
+
+        // AI Chat Functionality
+        document.getElementById('aiSend').addEventListener('click', sendMessage);
+        document.getElementById('aiInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                sendMessage();
+            }
+        });
+
+        function sendMessage() {
+            const input = document.getElementById('aiInput');
+            const message = input.value.trim();
+            
+            if (message === '') return;
+            
+            // Add user message
+            addMessage(message, 'user');
+            input.value = '';
+            
+            // Simulate AI response
+            setTimeout(() => {
+                let response = getAIResponse(message);
+                addMessage(response, 'ai');
+            }, 1000);
+        }
+
+        function addMessage(text, sender) {
+            const messagesContainer = document.getElementById('aiMessages');
+            const messageElement = document.createElement('div');
+            messageElement.classList.add('message');
+            messageElement.classList.add(sender === 'ai' ? 'ai-message' : 'user-message');
+            messageElement.textContent = text;
+            messagesContainer.appendChild(messageElement);
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        }
+
+        function getAIResponse(message) {
+            const lowerMessage = message.toLowerCase();
+            
+            // Expanded conversation flow for the AI assistant
+            if (lowerMessage.includes('preço') || lowerMessage.includes('custo') || lowerMessage.includes('valor') || lowerMessage.includes('quanto custa')) {
+                return "Temos diferentes planos de rastreamento para atender suas necessidades em Manaus. Posso conectar você com um de nossos especialistas para um orçamento personalizado? Posso adiantar que nossos planos começam a partir de R$ 49,90/mês.";
+            } else if (lowerMessage.includes('instalação') || lowerMessage.includes('instalar') || lowerMessage.includes('colocar')) {
+                return "Nossos técnicos realizam a instalação do rastreador de forma rápida e discreta em Manaus e região metropolitana. O processo leva em média 30 minutos e pode ser agendado conforme sua disponibilidade. Oferecemos instalação residencial e em empresas.";
+            } else if (lowerMessage.includes('funciona') || lowerMessage.includes('como funciona') || lowerMessage.includes('tecnologia')) {
+                return "Nossos rastreadores utilizam tecnologia GPS e GSM para localização em tempo real. Os dados são transmitidos para nossa central 24h e podem ser acessados pelo aplicativo ou plataforma web. Na região de Manaus, utilizamos também tecnologia satelital para áreas com pouca cobertura celular.";
+            } else if (lowerMessage.includes('app') || lowerMessage.includes('aplicativo') || lowerMessage.includes('celular')) {
+                return "Nosso aplicativo está disponível para iOS e Android. Nele você pode ver a localização em tempo real, histórico de rotas, configurar alertas, cercas eletrônicas e muito mais. Posso enviar o link de download se desejar!";
+            } else if (lowerMessage.includes('garantia') || lowerMessage.includes('suporte') || lowerMessage.includes('assistência')) {
+                return "Oferecemos garantia de 12 meses em todos os equipamentos e suporte técnico especializado 24/7 para nossos clientes em Manaus. Temos equipe local para atendimento rápido e eficiente.";
+            } else if (lowerMessage.includes('manaus') || lowerMessage.includes('amazonas') || lowerMessage.includes('região')) {
+                return "Sim, somos especializados em rastreamento na região de Manaus e Amazonas! Temos soluções adaptadas para a realidade local, incluindo rastreamento para embarcações e tecnologia que funciona mesmo em áreas com pouca infraestrutura.";
+            } else if (lowerMessage.includes('embarcação') || lowerMessage.includes('barco') || lowerMessage.includes('navio')) {
+                return "Sim, oferecemos rastreamento especializado para embarcações na região amazônica! Nossos dispositivos são à prova d'água e utilizam tecnologia que funciona mesmo em rios e áreas remotas. Podemos agendar uma demonstração?";
+            } else if (lowerMessage.includes('demo') || lowerMessage.includes('demonstração') || lowerMessage.includes('testar')) {
+                return "Claro! Posso agendar uma demonstração gratuita do nosso sistema para você. Nosso especialista pode ir até sua empresa ou residência em Manaus para mostrar todas as funcionalidades. Qual seu bairro?";
+            } else if (lowerMessage.includes('planos') || lowerMessage.includes('opções') || lowerMessage.includes('pacotes')) {
+                return "Temos três planos principais: Básico (R$ 49,90/mês), Profissional (R$ 79,90/mês) e Empresarial (R$ 129,90/mês). Cada um com diferentes funcionalidades. Posso detalhar as diferenças ou conectar você com nosso comercial?";
+            } else if (lowerMessage.includes('roubo') || lowerMessage.includes('furto') || lowerMessage.includes('segurança')) {
+                return "Nossos rastreadores possuem funcionalidades anti-roubo avançadas, incluindo bloqueio remoto do motor, notificações de ignição não autorizada e rastreamento em tempo real. Já ajudamos a recuperar mais de 95% dos veículos roubados em Manaus!";
+            } else if (lowerMessage.includes('frota') || lowerMessage.includes('empresa') || lowerMessage.includes('empresarial')) {
+                return "Para empresas em Manaus, oferecemos soluções completas de gestão de frotas com relatórios detalhados de consumo, rotas, tempo de parada e produtividade. Podemos agendar uma reunião com nosso especialista em frotas?";
+            } else if (lowerMessage.includes('lgpd') || lowerMessage.includes('privacidade') || lowerMessage.includes('dados')) {
+                return "Nossa empresa está em total conformidade com a LGPD. Todos os dados de localização são tratados com máxima segurança e confidencialidade, seguindo as melhores práticas de proteção de dados pessoais.";
+            } else if (lowerMessage.includes('histórico') || lowerMessage.includes('rotas') || lowerMessage.includes('trajeto')) {
+                return "Nosso sistema mantém histórico completo de rotas por até 2 anos. Você pode visualizar trajetos, paradas, velocidades e tempos de cada viagem. Posso mostrar como acessar esses relatórios?";
+            } else if (lowerMessage.includes('relatório') || lowerMessage.includes('estatística') || lowerMessage.includes('analise')) {
+                return "Temos diversos tipos de relatórios: quilometragem, velocidade, tempo de motor ligado, consumo estimado, paradas e muito mais. Posso explicar como gerar esses relatórios personalizados?";
+            } else if (lowerMessage.includes('cerca') || lowerMessage.includes('geofence') || lowerMessage.includes('área')) {
+                return "Com as cercas eletrônicas, você define áreas no mapa e recebe alertas quando o veículo entrar ou sair delas. É ideal para monitorar rotas, áreas de risco ou horários de trabalho. Posso demonstrar?";
+            } else if (lowerMessage.includes('manutenção') || lowerMessage.includes('revisão') || lowerMessage.includes('conserto')) {
+                return "Oferecemos alertas de manutenção preditiva baseados em quilometragem e tempo de uso. O sistema avisa quando é hora de fazer revisões preventivas, ajudando a evitar problemas e reduzir custos.";
+            } else if (lowerMessage.includes('oi') || lowerMessage.includes('olá') || lowerMessage.includes('bom dia') || lowerMessage.includes('boa tarde') || lowerMessage.includes('boa noite')) {
+                return "Olá! Sou o assistente virtual da TH Rastreadores em Manaus. Estou aqui para ajudar com informações sobre nossos serviços de rastreamento. Em que posso ser útil?";
+            } else if (lowerMessage.includes('obrigado') || lowerMessage.includes('obrigada') || lowerMessage.includes('agradeço')) {
+                return "De nada! Fico feliz em ajudar. Se tiver mais alguma dúvida sobre nossos serviços em Manaus, estou à disposição!";
+            } else {
+                return "Obrigado pelo seu interesse! Para informações mais específicas sobre nossos serviços em Manaus, posso conectar você com um de nossos especialistas locais ou você pode visitar nossa página de serviços. Posso ajudar em algo mais?";
+            }
+        }
+
+        // Smooth scrolling for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                
+                const targetId = this.getAttribute('href');
+                if (targetId === '#') return;
+                
+                const targetElement = document.querySelector(targetId);
+                if (targetElement) {
+                    window.scrollTo({
+                        top: targetElement.offsetTop - 80,
+                        behavior: 'smooth'
+                    });
+                    
+                    // Close mobile menu if open
+                    document.querySelector('nav ul').classList.remove('active');
+                }
+            });
+        });
+
+        // Map and Tracking Functionality
+        let map, vehicle1, vehicle2, vehicle3, routeLine, geofenceCircle, demoInterval;
+        let vehicle1Marker, vehicle2Marker, vehicle3Marker;
+        let isGeofenceMode = false;
+        let demoRunning = false;
+        let selectedVehicle = 1;
+        
+        // Initialize map
+        function initMap() {
+            // Coordinates for Manaus
+            const manausLat = -3.1190;
+            const manausLng = -60.0217;
+            
+            // Create map
+            map = L.map('map').setView([manausLat, manausLng], 12);
+            
+            // Add tile layer
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+            }).addTo(map);
+            
+            // Vehicle icons
+            const vehicleIcon = L.divIcon({
+                html: '<i class="fas fa-car" style="color: #D4AF37; font-size: 24px;"></i>',
+                iconSize: [30, 30],
+                className: 'vehicle-marker'
+            });
+            
+            const vehicleMovingIcon = L.divIcon({
+                html: '<i class="fas fa-car" style="color: #4CAF50; font-size: 24px;"></i>',
+                iconSize: [30, 30],
+                className: 'vehicle-marker'
+            });
+            
+            const vehicleOfflineIcon = L.divIcon({
+                html: '<i class="fas fa-car" style="color: #F44336; font-size: 24px;"></i>',
+                iconSize: [30, 30],
+                className: 'vehicle-marker'
+            });
+            
+            // Initial vehicle positions in Manaus
+            vehicle1 = {
+                lat: -3.1190,
+                lng: -60.0217,
+                speed: 45,
+                status: 'moving',
+                lastUpdate: new Date()
+            };
+            
+            vehicle2 = {
+                lat: -3.1290,
+                lng: -60.0317,
+                speed: 0,
+                status: 'stopped',
+                lastUpdate: new Date()
+            };
+            
+            vehicle3 = {
+                lat: -3.1390,
+                lng: -60.0417,
+                speed: 0,
+                status: 'offline',
+                lastUpdate: new Date(Date.now() - 60 * 60 * 1000) // 1 hour ago
+            };
+            
+            // Add vehicle markers to map
+            vehicle1Marker = L.marker([vehicle1.lat, vehicle1.lng], {icon: vehicleMovingIcon})
+                .addTo(map)
+                .bindPopup('Frota Manaus 01<br>Velocidade: 45 km/h<br>Status: Em movimento');
+            
+            vehicle2Marker = L.marker([vehicle2.lat, vehicle2.lng], {icon: vehicleIcon})
+                .addTo(map)
+                .bindPopup('Frota Manaus 02<br>Velocidade: 0 km/h<br>Status: Parado');
+            
+            vehicle3Marker = L.marker([vehicle3.lat, vehicle3.lng], {icon: vehicleOfflineIcon})
+                .addTo(map)
+                .bindPopup('Frota Manaus 03<br>Velocidade: -- km/h<br>Status: Offline');
+            
+            // Add route history line
+            const routeCoordinates = [
+                [-3.1220, -60.0250],
+                [-3.1230, -60.0260],
+                [-3.1240, -60.0270],
+                [-3.1250, -60.0280],
+                [vehicle1.lat, vehicle1.lng]
+            ];
+            
+            routeLine = L.polyline(routeCoordinates, {
+                color: '#4CAF50',
+                weight: 4,
+                opacity: 0.7
+            }).addTo(map);
+            
+            // Add geofence circle (initially hidden)
+            geofenceCircle = L.circle([manausLat, manausLng], {
+                color: '#D4AF37',
+                fillColor: '#D4AF37',
+                fillOpacity: 0.1,
+                radius: 500
+            }).addTo(map);
+            
+            geofenceCircle.setStyle({opacity: 0});
+            
+            // Add some notable locations in Manaus
+            const locations = [
+                {name: "Centro de Manaus", lat: -3.1300, lng: -60.0230},
+                {name: "Aeroporto", lat: -3.0386, lng: -59.9910},
+                {name: "Porto", lat: -3.1430, lng: -60.0230}
+            ];
+            
+            locations.forEach(loc => {
+                L.marker([loc.lat, loc.lng])
+                    .addTo(map)
+                    .bindPopup(loc.name);
+            });
+        }
+        
+        // Initialize map when page loads
+        window.addEventListener('load', initMap);
+        
+        // Vehicle selection
+        document.querySelectorAll('.vehicle-card').forEach(card => {
+            card.addEventListener('click', function() {
+                // Remove active class from all cards
+                document.querySelectorAll('.vehicle-card').forEach(c => {
+                    c.classList.remove('active');
+                });
+                
+                // Add active class to clicked card
+                this.classList.add('active');
+                
+                // Update selected vehicle
+                selectedVehicle = parseInt(this.getAttribute('data-vehicle'));
+                
+                // Center map on selected vehicle
+                if (selectedVehicle === 1) {
+                    map.setView([vehicle1.lat, vehicle1.lng], 14);
+                } else if (selectedVehicle === 2) {
+                    map.setView([vehicle2.lat, vehicle2.lng], 14);
+                } else if (selectedVehicle === 3) {
+                    map.setView([vehicle3.lat, vehicle3.lng], 14);
+                }
+            });
+        });
+        
+        // Update vehicle positions and status
+        function updateVehicleStatus() {
+            // Update vehicle 1 status
+            document.getElementById('speed1').textContent = vehicle1.speed + ' km/h';
+            document.getElementById('lastUpdate1').textContent = getTimeSince(vehicle1.lastUpdate);
+            
+            // Update vehicle 2 status
+            document.getElementById('speed2').textContent = vehicle2.speed + ' km/h';
+            document.getElementById('lastUpdate2').textContent = getTimeSince(vehicle2.lastUpdate);
+            
+            // Update vehicle 3 status
+            document.getElementById('speed3').textContent = vehicle3.status === 'offline' ? '-- km/h' : vehicle3.speed + ' km/h';
+            document.getElementById('lastUpdate3').textContent = getTimeSince(vehicle3.lastUpdate);
+            
+            // Update markers
+            vehicle1Marker.setLatLng([vehicle1.lat, vehicle1.lng]);
+            vehicle2Marker.setLatLng([vehicle2.lat, vehicle2.lng]);
+            vehicle3Marker.setLatLng([vehicle3.lat, vehicle3.lng]);
+            
+            // Update popups
+            vehicle1Marker.getPopup().setContent(
+                'Frota Manaus 01<br>Velocidade: ' + vehicle1.speed + ' km/h<br>Status: ' + 
+                (vehicle1.status === 'moving' ? 'Em movimento' : 'Parado')
+            );
+            
+            vehicle2Marker.getPopup().setContent(
+                'Frota Manaus 02<br>Velocidade: ' + vehicle2.speed + ' km/h<br>Status: ' + 
+                (vehicle2.status === 'moving' ? 'Em movimento' : 'Parado')
+            );
+            
+            vehicle3Marker.getPopup().setContent(
+                'Frota Manaus 03<br>Velocidade: ' + (vehicle3.status === 'offline' ? '-- km/h' : vehicle3.speed + ' km/h') + 
+                '<br>Status: ' + (vehicle3.status === 'offline' ? 'Offline' : (vehicle3.status === 'moving' ? 'Em movimento' : 'Parado'))
+            );
+            
+            // Update vehicle status badges
+            const badges = document.querySelectorAll('.vehicle-status-badge');
+            
+            if (vehicle1.status === 'moving') {
+                badges[0].className = 'vehicle-status-badge status-moving';
+                badges[0].textContent = 'Em Movimento';
+            } else {
+                badges[0].className = 'vehicle-status-badge status-stopped';
+                badges[0].textContent = 'Parado';
+            }
+            
+            if (vehicle2.status === 'moving') {
+                badges[1].className = 'vehicle-status-badge status-moving';
+                badges[1].textContent = 'Em Movimento';
+            } else {
+                badges[1].className = 'vehicle-status-badge status-stopped';
+                badges[1].textContent = 'Parado';
+            }
+            
+            if (vehicle3.status === 'offline') {
+                badges[2].className = 'vehicle-status-badge status-offline';
+                badges[2].textContent = 'Offline';
+            } else if (vehicle3.status === 'moving') {
+                badges[2].className = 'vehicle-status-badge status-moving';
+                badges[2].textContent = 'Em Movimento';
+            } else {
+                badges[2].className = 'vehicle-status-badge status-stopped';
+                badges[2].textContent = 'Parado';
+            }
+        }
+        
+        // Get time since last update
+        function getTimeSince(date) {
+            const now = new Date();
+            const diffMs = now - date;
+            const diffMins = Math.floor(diffMs / 60000);
+            const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
+            
+            if (diffMins < 1) return 'Agora mesmo';
+            if (diffMins === 1) return '1 min atrás';
+            if (diffMins < 60) return diffMins + ' min atrás';
+            if (diffHours === 1) return '1 hora atrás';
+            return diffHours + ' horas atrás';
+        }
+        
+        // Add alert to the alert panel
+        function addAlert(type, message, vehicle) {
+            const alertList = document.getElementById('alertList');
+            const alertItem = document.createElement('div');
+            alertItem.className = 'alert-item';
+            alertItem.setAttribute('data-alert', type);
+            
+            let iconClass, icon;
+            if (type === 'speed') {
+                iconClass = 'alert-speed';
+                icon = 'fas fa-tachometer-alt';
+            } else if (type === 'geofence') {
+                iconClass = 'alert-geofence';
+                icon = 'fas fa-map-marker-alt';
+            } else if (type === 'ignition') {
+                iconClass = 'alert-ignition';
+                icon = 'fas fa-key';
+            } else if (type === 'panic') {
+                iconClass = 'alert-panic';
+                icon = 'fas fa-exclamation-triangle';
+            } else if (type === 'battery') {
+                iconClass = 'alert-battery';
+                icon = 'fas fa-battery-quarter';
+            }
+            
+            const now = new Date();
+            const timeStr = now.getHours() + ':' + (now.getMinutes() < 10 ? '0' : '') + now.getMinutes();
+            
+            alertItem.innerHTML = `
+                <div class="alert-icon ${iconClass}">
+                    <i class="${icon}"></i>
+                </div>
+                <div class="alert-content">
+                    <div>${message}</div>
+                    <div class="alert-time">${vehicle} • ${timeStr}</div>
+                </div>
+            `;
+            
+            alertList.insertBefore(alertItem, alertList.firstChild);
+            
+            // Limit to 5 alerts
+            if (alertList.children.length > 5) {
+                alertList.removeChild(alertList.lastChild);
+            }
+            
+            // Add click event to focus on vehicle
+            alertItem.addEventListener('click', function() {
+                if (vehicle.includes('01')) {
+                    document.querySelector('.vehicle-card[data-vehicle="1"]').click();
+                } else if (vehicle.includes('02')) {
+                    document.querySelector('.vehicle-card[data-vehicle="2"]').click();
+                } else if (vehicle.includes('03')) {
+                    document.querySelector('.vehicle-card[data-vehicle="3"]').click();
+                }
+            });
+        }
+        
+        // Geofence functionality
+        document.getElementById('geofenceBtn').addEventListener('click', function() {
+            if (isGeofenceMode) {
+                // Disable geofence mode
+                isGeofenceMode = false;
+                geofenceCircle.setStyle({opacity: 0});
+                this.style.backgroundColor = '';
+                this.style.color = '';
+            } else {
+                // Enable geofence mode
+                isGeofenceMode = true;
+                
+                // Center geofence on selected vehicle
+                if (selectedVehicle === 1) {
+                    geofenceCircle.setLatLng([vehicle1.lat, vehicle1.lng]);
+                } else if (selectedVehicle === 2) {
+                    geofenceCircle.setLatLng([vehicle2.lat, vehicle2.lng]);
+                } else if (selectedVehicle === 3) {
+                    geofenceCircle.setLatLng([vehicle3.lat, vehicle3.lng]);
+                }
+                
+                geofenceCircle.setStyle({opacity: 1});
+                this.style.backgroundColor = '#D4AF37';
+                this.style.color = '#121212';
+                
+                // Add alert
+                addAlert('geofence', 'Cerca eletrônica ativada', 'Sistema');
+            }
+        });
+        
+        // Panic button functionality
+        document.getElementById('panicBtn').addEventListener('click', function() {
+            // Simulate panic button press
+            let vehicleName = 'Frota Manaus 0' + selectedVehicle;
+            addAlert('panic', 'Botão de pânico ativado! Verifique a localização.', vehicleName);
+            
+            // Flash the vehicle marker
+            let flashCount = 0;
+            const flashInterval = setInterval(() => {
+                let marker;
+                if (selectedVehicle === 1) marker = vehicle1Marker;
+                else if (selectedVehicle === 2) marker = vehicle2Marker;
+                else if (selectedVehicle === 3) marker = vehicle3Marker;
+                
+                if (marker._icon.style.color === 'rgb(244, 67, 54)') {
+                    marker._icon.style.color = selectedVehicle === 1 ? '#4CAF50' : (selectedVehicle === 2 ? '#D4AF37' : '#F44336');
+                } else {
+                    marker._icon.style.color = '#F44336';
+                }
+                
+                flashCount++;
+                if (flashCount >= 6) {
+                    clearInterval(flashInterval);
+                    marker._icon.style.color = selectedVehicle === 1 ? '#4CAF50' : (selectedVehicle === 2 ? '#D4AF37' : '#F44336');
+                }
+            }, 500);
+        });
+        
+        // Report button functionality
+        document.getElementById('reportBtn').addEventListener('click', function() {
+            // Navigate to reports section
+            document.querySelector('#reports').scrollIntoView({ behavior: 'smooth' });
+        });
+        
+        // History button functionality
+        document.getElementById('historyBtn').addEventListener('click', function() {
+            // Show route history
+            alert('Histórico de rotas: Visualize os trajetos completos dos últimos 7 dias no mapa. Use os filtros para selecionar datas específicas.');
+        });
+        
+        // Demo functionality
+        document.getElementById('demoBtn').addEventListener('click', function() {
+            if (demoRunning) {
+                stopDemo();
+                this.innerHTML = '<i class="fas fa-play"></i> Iniciar Demo';
+            } else {
+                startDemo();
+                this.innerHTML = '<i class="fas fa-stop"></i> Parar Demo';
+            }
+        });
+        
+        // Reset demo
+        document.getElementById('resetDemo').addEventListener('click', function() {
+            stopDemo();
+            document.getElementById('demoBtn').innerHTML = '<i class="fas fa-play"></i> Iniciar Demo';
+            
+            // Reset vehicle positions
+            vehicle1 = {
+                lat: -3.1190,
+                lng: -60.0217,
+                speed: 45,
+                status: 'moving',
+                lastUpdate: new Date()
+            };
+            
+            vehicle2 = {
+                lat: -3.1290,
+                lng: -60.0317,
+                speed: 0,
+                status: 'stopped',
+                lastUpdate: new Date()
+            };
+            
+            vehicle3 = {
+                lat: -3.1390,
+                lng: -60.0417,
+                speed: 0,
+                status: 'offline',
+                lastUpdate: new Date(Date.now() - 60 * 60 * 1000)
+            };
+            
+            updateVehicleStatus();
+            
+            // Clear alerts except the initial ones
+            const alertList = document.getElementById('alertList');
+            while (alertList.children.length > 5) {
+                alertList.removeChild(alertList.lastChild);
+            }
+        });
+        
+        // Start demo
+        function startDemo() {
+            demoRunning = true;
+            let step = 0;
+            
+            demoInterval = setInterval(() => {
+                step++;
+                
+                // Move vehicle 1
+                vehicle1.lat += 0.001;
+                vehicle1.lng += 0.001;
+                vehicle1.lastUpdate = new Date();
+                
+                // Simulate random events
+                if (step === 5) {
+                    vehicle1.speed = 85;
+                    addAlert('speed', 'Excesso de velocidade detectado', 'Frota Manaus 01');
+                } else if (step === 10) {
+                    vehicle1.status = 'stopped';
+                    vehicle1.speed = 0;
+                    addAlert('ignition', 'Veículo parado por mais de 5 minutos', 'Frota Manaus 01');
+                } else if (step === 15) {
+                    vehicle1.status = 'moving';
+                    vehicle1.speed = 35;
+                } else if (step === 20) {
+                    // Simulate geofence exit if enabled
+                    if (isGeofenceMode) {
+                        addAlert('geofence', 'Veículo saiu da área definida', 'Frota Manaus 01');
+                    }
+                } else if (step === 25) {
+                    // Simulate vehicle 3 coming back online
+                    vehicle3.status = 'moving';
+                    vehicle3.speed = 40;
+                    vehicle3.lastUpdate = new Date();
+                }
+                
+                // Move vehicle 2 occasionally
+                if (step % 8 === 0) {
+                    vehicle2.lat += 0.0005;
+                    vehicle2.lng += 0.0005;
+                    vehicle2.status = 'moving';
+                    vehicle2.speed = 25;
+                    vehicle2.lastUpdate = new Date();
+                } else if (step % 12 === 0) {
+                    vehicle2.status = 'stopped';
+                    vehicle2.speed = 0;
+                }
+                
+                // Move vehicle 3 when online
+                if (vehicle3.status === 'moving') {
+                    vehicle3.lat += 0.0008;
+                    vehicle3.lng += 0.0008;
+                    vehicle3.lastUpdate = new Date();
+                }
+                
+                updateVehicleStatus();
+                
+                // End demo after 30 steps
+                if (step >= 30) {
+                    stopDemo();
+                    document.getElementById('demoBtn').innerHTML = '<i class="fas fa-play"></i> Iniciar Demo';
+                }
+            }, 1000);
+        }
+        
+        // Stop demo
+        function stopDemo() {
+            demoRunning = false;
+            if (demoInterval) {
+                clearInterval(demoInterval);
+            }
+        }
+        
+        // Contact form submission
+        document.getElementById('contactForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            alert('Obrigado pelo seu contato! Nossa equipe em Manaus entrará em contato em breve.');
+            this.reset();
+        });
+        
+        // Initial status update
+        updateVehicleStatus();
+    </script>
+</body>
+</html>
