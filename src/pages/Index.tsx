@@ -4,10 +4,12 @@ import { Hero } from "@/components/Hero";
 import { Portfolio } from "@/components/Portfolio";
 import { Contact } from "@/components/Contact";
 import { BackToTop } from "@/components/BackToTop";
+import { AvailableBanner } from "@/components/AvailableBanner";
 
 const Index = () => {
   return (
     <div className="relative min-h-screen">
+      <AvailableBanner />
       <ParticlesBackground />
       <Header />
 
