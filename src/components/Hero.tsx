@@ -46,7 +46,7 @@ export const Hero = () => {
   };
 
   return (
-    <section id="sobre" className="min-h-screen flex items-center pt-20 pb-12">
+    <section id="sobre" className="min-h-screen flex items-center pt-32 sm:pt-20 pb-12">
       <div className="container mx-auto px-4">
         <div className="flex flex-col lg:flex-row items-center gap-12 lg:gap-20">
           <motion.div
