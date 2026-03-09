@@ -35,7 +35,7 @@ const Index = () => {
       <footer className="border-t border-primary/10 bg-background/80 backdrop-blur-lg py-6 mt-20">
         <div className="container mx-auto px-4 text-center font-mono text-xs text-muted-foreground">
           <p>
-            © 2025 Gustavo Dantas | Desenvolvido com 💙 e código limpo
+            © {new Date().getFullYear()} Gustavo Dantas · Todos os direitos reservados
           </p>
         </div>
       </footer>
