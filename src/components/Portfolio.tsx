@@ -34,21 +34,25 @@ export const Portfolio = () => {
           </p>
         </motion.div>
 
-        <div className="flex flex-wrap justify-center gap-3 mb-12">
+        <div className="flex flex-wrap justify-center gap-4 mb-12">
           {sections.map((section) => (
-            <Button
+            <motion.button
               key={section.id}
-              variant={activeSection === section.id ? "default" : "outline"}
-              className={`gap-2 font-mono text-sm ${
-                activeSection === section.id
-                  ? "bg-primary text-primary-foreground hover:bg-primary/90 shadow-glow"
-                  : "border-primary/20 text-muted-foreground hover:text-primary hover:border-primary/40 hover:bg-primary/5"
-              }`}
+              whileHover={{ scale: 1.05, y: -2 }}
+              whileTap={{ scale: 0.97 }}
               onClick={() => setActiveSection(activeSection === section.id ? null : section.id)}
+              className={`relative flex flex-col items-center gap-2 px-6 py-4 rounded-xl font-mono text-sm cursor-pointer transition-all duration-300 ${
+                activeSection === section.id
+                  ? "bg-primary text-primary-foreground shadow-glow ring-2 ring-primary/50"
+                  : "bg-card border border-primary/20 text-muted-foreground hover:text-primary hover:border-primary/50 hover:shadow-md hover:shadow-primary/10"
+              }`}
             >
-              <section.icon className="w-4 h-4" />
-              {section.label}
-            </Button>
+              <section.icon className={`w-6 h-6 ${activeSection === section.id ? "text-primary-foreground" : "text-primary"}`} />
+              <span className="font-semibold">{section.label}</span>
+              <span className={`text-[10px] uppercase tracking-widest ${activeSection === section.id ? "text-primary-foreground/70" : "text-muted-foreground/60"}`}>
+                {activeSection === section.id ? "▼ Aberto" : "Clique para ver"}
+              </span>
+            </motion.button>
           ))}
         </div>
 
