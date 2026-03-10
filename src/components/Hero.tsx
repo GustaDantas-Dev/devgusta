@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { ArrowRight, Terminal, MapPin, Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import profileImg from "@/assets/profile.jpg";
 
 const titles = [
   "Desenvolvedor Full-Stack",
