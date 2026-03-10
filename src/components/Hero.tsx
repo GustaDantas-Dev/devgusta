@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { ArrowRight, Terminal, MapPin, Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import profileImg from "@/assets/profile.jpg";
 
 const titles = [
   "Desenvolvedor Full-Stack",
@@ -119,7 +120,7 @@ export const Hero = () => {
             <div className="relative">
               <div className="w-56 h-56 md:w-72 md:h-72 rounded-lg border-2 border-primary/30 p-1.5 shadow-glow animate-float overflow-hidden">
                 <img
-                  src="https://i.postimg.cc/jd268BTn/Screenshot-20251117-083135.jpg"
+                  src={profileImg}
                   alt="Gustavo Dantas - Desenvolvedor Full-Stack"
                   className="w-full h-full object-cover rounded-md"
                   loading="eager"
